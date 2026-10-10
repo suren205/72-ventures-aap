@@ -1,0 +1,9 @@
+{
+  "name": "72-ventures-khata",
+  "version": "1.0.0",
+  "description": "Savings, loan and ledger system for 72 Ventures with member logins",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "private": true
+}
