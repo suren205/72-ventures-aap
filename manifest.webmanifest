@@ -1,0 +1,14 @@
+{
+  "name": "72 Ventures Khata",
+  "short_name": "72 Khata",
+  "description": "Savings, loans and ledger for the 72 Ventures group",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#12284a",
+  "theme_color": "#12284a",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

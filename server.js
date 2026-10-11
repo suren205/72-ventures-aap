@@ -5,7 +5,11 @@ const http = require('http'), fs = require('fs'), path = require('path'), crypto
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const FILE = path.join(DATA_DIR, 'db.json');
-const PAGE = path.join(__dirname, 'public', 'index.html');
+const STATIC = { '/': 'index.html', '/index.html': 'index.html', '/manifest.webmanifest': 'manifest.webmanifest', '/sw.js': 'sw.js',
+  '/icon-192.png': 'icon-192.png', '/icon-512.png': 'icon-512.png', '/apple-touch-icon.png': 'apple-touch-icon.png' };
+const TYPES = { html: 'text/html; charset=utf-8', webmanifest: 'application/manifest+json', js: 'text/javascript; charset=utf-8', png: 'image/png' };
+// Files may sit next to server.js or in a "public" folder; next to server.js wins.
+const findFile = n => [path.join(__dirname, n), path.join(__dirname, 'public', n)].find(f => fs.existsSync(f));
 const COLS = ['members', 'deposits', 'loans', 'repayments', 'entries', 'notices'];
 const DEF_CFG = { name: '72 Ventures Pvt. Ltd.', shareValue: 200, minShares: 5, maxShares: 10, startMonth: '2026-11',
   loanRate: 8, loanLimitPct: 80, loanTermMax: 11, dueDay: 25, graceDays: 3, lateFee: 500,
@@ -180,9 +184,10 @@ function body(req) { return new Promise((ok, no) => { let s = ''; req.on('data',
 
 async function handle(req, res) {
   const url = req.url.split('?')[0];
-  if (req.method === 'GET' && (url === '/' || url === '/index.html')) {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'same-origin' });
-    return fs.createReadStream(PAGE).pipe(res);
+  if (req.method === 'GET' && STATIC[url]) {
+    const f = findFile(STATIC[url]); if (!f) return send(res, 404, { error: 'not_found' });
+    res.writeHead(200, { 'Content-Type': TYPES[f.split('.').pop()], 'Cache-Control': url.endsWith('.png') ? 'max-age=86400' : 'no-cache', 'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'same-origin' });
+    return fs.createReadStream(f).pipe(res);
   }
   if (!url.startsWith('/api/')) return send(res, 404, { error: 'not_found' });
   const act = url.slice(5);
