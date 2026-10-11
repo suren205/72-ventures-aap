@@ -187,6 +187,7 @@ const T={
  x_pending:['Your account is waiting for the admin to approve it.','तपाईंको खाता एडमिनको स्वीकृति पर्खिरहेको छ।'], x_signup_full:['Too many accounts are waiting. Ask the admin to approve them first.','धेरै खाता स्वीकृति पर्खिरहेका छन्। पहिले एडमिनलाई स्वीकृत गर्न भन्नुहोस्।'],
  waiting:['Waiting for your approval','तपाईंको स्वीकृति पर्खिरहेका'], approve:['Approve','स्वीकृत गर्नुहोस्'], reject:['Remove','हटाउनुहोस्'], asked_on:['asked on','अनुरोध मिति'],
  history:['Change history','परिवर्तन इतिहास'], h_hint:['Every change is written here with the name and the time. Only admins see this tab. Nobody can edit or delete it in the app.','हरेक परिवर्तन नाम र समयसहित यहाँ लेखिन्छ। यो ट्याब एडमिनले मात्र देख्छन्। एपबाट यसलाई कसैले सम्पादन वा मेटाउन सक्दैन।'], h_when:['When','समय'], h_who:['Who','कसले'], h_what:['What','के'], h_add:['Added','थपियो'], h_edit:['Changed','परिवर्तन'], h_delete:['Deleted','मेटाइयो'], h_signup:['Signed up','खाता बनायो'], h_none:['No changes yet.','अहिलेसम्म कुनै परिवर्तन छैन।'],
+ serial:['Member No.','सदस्य नं.'],
  install:['Install app','एप इन्स्टल गर्नुहोस्'],
  loading:['Loading records…','अभिलेख लोड हुँदैछ…'],
  nodb_h:['Cannot reach the server','सर्भरसँग जोडिन सकिएन'],
@@ -260,6 +261,8 @@ const fdate=s=>s?new Intl.DateTimeFormat(loc(),{day:'numeric',month:'short',year
 const fmonth=(ym,long)=>new Intl.DateTimeFormat(loc(),long?{month:'long',year:'numeric'}:{month:'short'}).format(parse(ym+'-01'));
 const cfg=()=>{const c=Object.assign({},DEF,S.cfg||{});if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(c.startMonth))c.startMonth=DEF.startMonth;return c};
 const months=()=>{const d=parse(cfg().startMonth+'-01');return Array.from({length:12},(_,i)=>iso(new Date(d.getFullYear(),d.getMonth()+i,1)).slice(0,7))};
+const sn=m=>m&&m.serial?'72V-'+String(m.serial).padStart(3,'0'):'—';
+const bySerial=(a,b)=>(a.serial||1e9)-(b.serial||1e9)||String(a.name).localeCompare(b.name);
 const roleName=r=>t('r_'+(['chair','treasurer','secretary'].includes(r)?r:'member'));
 
 function calc(){
@@ -371,7 +374,7 @@ function vMe(){
   const m=C.mBy[S.me];
   if(!m)return emptyBox();
   const nowYm=today().slice(0,7), ls=C.loans.filter(l=>l.memberId===m.id), fees=S.deposits.filter(d=>d.memberId===m.id).reduce((a,d)=>a+num(d.fee),0);
-  return `<div><div class="bar"><h2>${esc(m.name)}</h2><button class="btn ghost sm" data-act="chg-pass">${t('chg_pass')}</button></div><p class="sub">${m.loginId?t('login_id')+': '+esc(m.loginId)+' · ':''}${roleName(m.role)}${m.joined?' · '+t('joined')+' '+fdate(m.joined):''}${missed(m)>=3?` <span class="chip bad">${t('missed',fmt(missed(m)))}</span>`:''}</p></div>
+  return `<div><div class="bar"><h2>${esc(m.name)}</h2><button class="btn ghost sm" data-act="chg-pass">${t('chg_pass')}</button></div><p class="sub"><b>${t('serial')}: ${sn(m)}</b> · ${m.loginId?t('login_id')+': '+esc(m.loginId)+' · ':''}${roleName(m.role)}${m.joined?' · '+t('joined')+' '+fdate(m.joined):''}${missed(m)>=3?` <span class="chip bad">${t('missed',fmt(missed(m)))}</span>`:''}</p></div>
   <section class="sheet">
     <div class="fig main"><div class="k">${t('saved')}</div><div class="v">${money(C.sav[m.id]||0)}</div><div class="n">${fmt(C.shr[m.id]||0)} ${t('shares')}</div></div>
     <div class="fig"><div class="k">${t('loan_out')}</div><div class="v">${money(C.owe[m.id]||0)}</div><div class="n">${t('n_loans',fmt(ls.filter(l=>l.status!=='closed').length))}</div></div>
@@ -386,24 +389,24 @@ function vMe(){
 }
 function vMembers(){
   if(!S.members.length)return emptyBox();
-  const ms=[...S.members].sort((a,b)=>(a.status==='left')-(b.status==='left')||String(a.name).localeCompare(b.name));
+  const ms=[...S.members].sort((a,b)=>(a.status==='left')-(b.status==='left')||bySerial(a,b));
   const pend=S.admin&&S.pending.length?`<section class="panel"><h3>${t('waiting')}</h3><div class="list">${S.pending.map(m=>`<div class="li"><div>${esc(m.name)}<small>${t('login_id')}: ${esc(m.loginId)}${m.phone?' · '+esc(m.phone):''} · ${t('asked_on')} ${fdate(m.joined)}</small></div><span style="white-space:nowrap"><button class="btn sm" data-act="approve" data-id="${m.id}">${t('approve')}</button> <button class="btn danger sm" data-act="reject" data-id="${m.id}">${t('reject')}</button></span></div>`).join('')}</div></section>`:'';
   return head(t('members'),`<button class="btn" data-act="add-member">${t('add_member')}</button>`)+pend+
-  `<div class="scroll"><table><thead><tr><th>${t('name')}</th><th>${t('role')}</th><th class="num">${t('shares')}</th><th class="num">${t('saved')}</th><th class="num">${t('loan_out')}</th><th class="num">${t('loan_limit')}</th><th></th></tr></thead><tbody>
-  ${ms.map(m=>`<tr><td><button class="link" data-act="view-member" data-id="${m.id}">${esc(m.name)}</button>${m.status==='left'?` <span class="chip">${t('left')}</span>`:''}${missed(m)>=3?` <span class="chip bad">${t('missed',fmt(missed(m)))}</span>`:''}${S.admin?`<small class="sub" style="display:block">${m.loginId&&m.hasPass?t('login_id')+': '+esc(m.loginId):t('no_login')}${m.admin?' · '+t('admin'):''}</small>`:''}${m.phone?`<small class="sub" style="display:block">${esc(m.phone)}</small>`:''}</td><td>${roleName(m.role)}</td><td class="num">${fmt(C.shr[m.id]||0)}</td><td class="num">${money(C.sav[m.id]||0)}</td><td class="num">${money(C.owe[m.id]||0)}</td><td class="num">${money(C.limit(m.id))}</td><td>${S.admin?`<button class="btn ghost sm" data-act="edit-member" data-id="${m.id}">${t('edit')}</button>`:''}</td></tr>`).join('')}
-  </tbody><tfoot><tr><td colspan="2">${t('total')}</td><td class="num">${fmt(C.shares)}</td><td class="num">${money(C.dep)}</td><td class="num">${money(C.out)}</td><td></td><td></td></tr></tfoot></table></div>`;
+  `<div class="scroll"><table><thead><tr><th>${t('serial')}</th><th>${t('name')}</th><th>${t('role')}</th><th class="num">${t('shares')}</th><th class="num">${t('saved')}</th><th class="num">${t('loan_out')}</th><th class="num">${t('loan_limit')}</th><th></th></tr></thead><tbody>
+  ${ms.map(m=>`<tr><td class="num" style="text-align:left"><b>${sn(m)}</b></td><td><button class="link" data-act="view-member" data-id="${m.id}">${esc(m.name)}</button>${m.status==='left'?` <span class="chip">${t('left')}</span>`:''}${missed(m)>=3?` <span class="chip bad">${t('missed',fmt(missed(m)))}</span>`:''}${S.admin?`<small class="sub" style="display:block">${m.loginId&&m.hasPass?t('login_id')+': '+esc(m.loginId):t('no_login')}${m.admin?' · '+t('admin'):''}</small>`:''}${m.phone?`<small class="sub" style="display:block">${esc(m.phone)}</small>`:''}</td><td>${roleName(m.role)}</td><td class="num">${fmt(C.shr[m.id]||0)}</td><td class="num">${money(C.sav[m.id]||0)}</td><td class="num">${money(C.owe[m.id]||0)}</td><td class="num">${money(C.limit(m.id))}</td><td>${S.admin?`<button class="btn ghost sm" data-act="edit-member" data-id="${m.id}">${t('edit')}</button>`:''}</td></tr>`).join('')}
+  </tbody><tfoot><tr><td colspan="3">${t('total')}</td><td class="num">${fmt(C.shares)}</td><td class="num">${money(C.dep)}</td><td class="num">${money(C.out)}</td><td></td><td></td></tr></tfoot></table></div>`;
 }
 function vSavings(){
   if(!S.members.length)return emptyBox();
   const ms=months(), nowYm=today().slice(0,7);
-  const list=S.members.filter(m=>m.status!=='left'||C.sav[m.id]).sort((a,b)=>String(a.name).localeCompare(b.name));
+  const list=S.members.filter(m=>m.status!=='left'||C.sav[m.id]).sort(bySerial);
   const dBy={}; S.deposits.forEach(d=>dBy[d.memberId+'|'+d.month]=d);
   const cell=(m,ym)=>{const d=dBy[m.id+'|'+ym], due=!d&&ym<=nowYm&&m.status!=='left'&&(!m.joined||m.joined.slice(0,7)<=ym);
     const cls='cell'+(d?' paid':due?' due':''), txt=d?fmt(d.shares)+(num(d.fee)>0?'*':''):due?t('due'):(S.admin?'+':'');
     return S.admin?`<button class="${cls}" data-act="dep" data-m="${m.id}" data-ym="${ym}" aria-label="${esc(m.name)} ${fmonth(ym,true)}">${txt}</button>`:`<span class="${cls}">${txt}</span>`};
   return head(t('savings'),`<button class="btn" data-act="add-dep">${t('rec_pay')}</button>`,t('grid_hint',money(C.c.shareValue))+' '+t('star')+'. '+t('late_hint',fmt(C.c.dueDay),fmt(C.c.graceDays),money(C.c.lateFee))+(S.admin?' '+t('grid_admin'):''))+
   `<div class="scroll"><table class="grid"><thead><tr><th>${t('r_member')}</th>${ms.map((ym,i)=>`<th class="${ym===nowYm?'now':''}">${fmonth(ym)}<br>${fmt(i+1)}</th>`).join('')}<th class="num">${t('total')}</th></tr></thead><tbody>
-  ${list.map(m=>`<tr><td>${esc(m.name)}</td>${ms.map(ym=>`<td>${cell(m,ym)}</td>`).join('')}<td class="num"><b>${money(C.sav[m.id]||0)}</b></td></tr>`).join('')}
+  ${list.map(m=>`<tr><td><small class="sub">${sn(m)}</small> ${esc(m.name)}</td>${ms.map(ym=>`<td>${cell(m,ym)}</td>`).join('')}<td class="num"><b>${money(C.sav[m.id]||0)}</b></td></tr>`).join('')}
   </tbody><tfoot><tr><td>${t('total')}</td>${ms.map(ym=>{const a=S.deposits.filter(d=>d.month===ym).reduce((x,d)=>x+num(d.amount),0);return `<td class="num" style="text-align:center">${a?kf(a):''}</td>`}).join('')}<td class="num">${money(C.dep)}</td></tr></tfoot></table></div>`;
 }
 const statusChip=s=>`<span class="chip ${s==='closed'?'good':s==='overdue'?'bad':'warn'}">${t('s_'+s)}</span>`;
@@ -602,7 +605,7 @@ function fSettings(){
 function memberInfo(id){
   const m=C.mBy[id]; if(!m)return;
   const ds=S.deposits.filter(d=>d.memberId===id).sort((a,b)=>a.month<b.month?-1:1), ls=C.loans.filter(l=>l.memberId===id);
-  openInfo(m.name,`<dl class="kv" style="margin:0"><dt>${t('role')}</dt><dd>${roleName(m.role)}</dd><dt>${t('joined')}</dt><dd>${fdate(m.joined)||'—'}</dd>${m.address?`<dt>${t('address')}</dt><dd>${esc(m.address)}</dd>`:''}<dt>${t('shares')}</dt><dd>${fmt(C.shr[id]||0)}</dd><dt>${t('saved')}</dt><dd>${money(C.sav[id]||0)}</dd><dt>${t('loan_out')}</dt><dd>${money(C.owe[id]||0)}</dd><dt>${t('loan_limit')}</dt><dd>${money(C.limit(id))}</dd></dl>
+  openInfo(m.name,`<dl class="kv" style="margin:0"><dt>${t('serial')}</dt><dd>${sn(m)}</dd><dt>${t('role')}</dt><dd>${roleName(m.role)}</dd><dt>${t('joined')}</dt><dd>${fdate(m.joined)||'—'}</dd>${m.address?`<dt>${t('address')}</dt><dd>${esc(m.address)}</dd>`:''}<dt>${t('shares')}</dt><dd>${fmt(C.shr[id]||0)}</dd><dt>${t('saved')}</dt><dd>${money(C.sav[id]||0)}</dd><dt>${t('loan_out')}</dt><dd>${money(C.owe[id]||0)}</dd><dt>${t('loan_limit')}</dt><dd>${money(C.limit(id))}</dd></dl>
   <div><b>${t('savings')}</b><div class="list">${ds.map(d=>`<div class="li"><div>${fmonth(d.month,true)}<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}</small></div><b class="num">${money(d.amount)}</b></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>
   ${ls.length?`<div><b>${t('loans')}</b><div class="list">${ls.map(l=>`<div class="li"><div>${fdate(l.issued)} ${statusChip(l.status)}<small>${t('outstanding')}: ${money(l.out)}</small></div><b class="num">${money(l.principal)}</b></div>`).join('')}</div></div>`:''}`);
 }

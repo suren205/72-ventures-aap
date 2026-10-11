@@ -38,6 +38,7 @@ function boot() {
     db = JSON.parse(fs.readFileSync(FILE, 'utf8'));
     db.cfg = Object.assign({}, DEF_CFG, db.cfg);
     COLS.forEach(c => db[c] = db[c] || {}); db.log = db.log || [];
+    fillSerials();
     return;
   }
   db = { secret: crypto.randomBytes(32).toString('hex'), cfg: { ...DEF_CFG } };
@@ -45,8 +46,18 @@ function boot() {
   const pw = process.env.ADMIN_PASSWORD || crypto.randomBytes(6).toString('base64url');
   db.members.admin = { name: 'Admin', loginId: 'admin', pass: hashPass(pw), pv: 1, admin: true, mustChange: true,
     role: 'member', status: 'active', joined: today(), phone: '', address: '', note: '' };
+  fillSerials();
   persist();
   console.log('\n  First start. Sign in with:\n    Login ID: admin\n    Password: ' + pw + '\n  You will be asked to set your own password.\n');
+}
+
+/* ---------- member numbers (given once, never reused) ---------- */
+function giveSerial(m) { if (!m.serial && m.status !== 'pending') { db.nextSerial = db.nextSerial || 1; m.serial = db.nextSerial++; } }
+function fillSerials() {   // older records: number them by join date
+  db.nextSerial = Math.max(db.nextSerial || 1, ...Object.values(db.members).map(m => (m.serial || 0) + 1));
+  Object.values(db.members).filter(m => !m.serial && m.status !== 'pending')
+    .sort((a, b) => (b.admin ? 1 : 0) - (a.admin ? 1 : 0) || String(a.joined).localeCompare(String(b.joined)) || String(a.name).localeCompare(String(b.name)))
+    .forEach(giveSerial);
 }
 
 /* ---------- sessions ---------- */
@@ -117,9 +128,9 @@ function stateFor(u) {
   const admin = !!u.admin, open = admin || db.cfg.openLedger === 'yes';
   const base = { me: u.id, admin, open, mustChange: !!u.mustChange, cfg: db.cfg, log: admin && !u.mustChange ? db.log.slice(-400).reverse() : [] };
   if (u.mustChange) return { ...base, members: [], deposits: [], loans: [], repayments: [], entries: [], notices: [], totals: totals() };
-  const view = m => admin ? { id: m.id, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, note: m.note, loginId: m.loginId || '', admin: !!m.admin, hasPass: !!m.pass }
-    : m.id === u.id ? { id: m.id, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, loginId: m.loginId || '' }
-    : { id: m.id, name: m.name, role: m.role, joined: m.joined, status: m.status };
+  const view = m => admin ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, note: m.note, loginId: m.loginId || '', admin: !!m.admin, hasPass: !!m.pass }
+    : m.id === u.id ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, loginId: m.loginId || '' }
+    : { id: m.id, serial: m.serial || 0, name: m.name, role: m.role, joined: m.joined, status: m.status };
   const mine = x => open || x.memberId === u.id;
   const loans = rows('loans').filter(mine), seen = new Set(loans.map(l => l.id));
   return { ...base, members: rows('members').filter(m => admin || (m.status !== 'pending' && (open || m.id === u.id))).map(view), deposits: rows('deposits').filter(mine), loans,
@@ -143,6 +154,7 @@ function save(admin, col, id, d) {
     rec = { ...(old || { pv: 1 }), name: str(d.name), phone: str(d.phone, 40), address: str(d.address), note: str(d.note, 500),
       role: ['chair', 'treasurer', 'secretary'].includes(d.role) ? d.role : 'member', joined: isDate(d.joined) ? d.joined : today(), status: d.status === 'left' ? 'left' : 'active', admin: d.admin === 'yes' };
     need(rec.name);
+    giveSerial(rec);   // new member, or a sign-up being approved
     need(!(id === admin.id && (!rec.admin || rec.status === 'left')), 'self_admin');
     const lid = str(d.loginId, 30).toLowerCase();
     if (lid) { need(/^[a-z0-9._-]{3,30}$/.test(lid), 'bad_login_id'); need(!rows('members').some(m => m.loginId === lid && m.id !== id), 'login_taken'); rec.loginId = lid; } else delete rec.loginId;
