@@ -17,7 +17,7 @@ const findFile = n => [path.join(__dirname, n), path.join(__dirname, 'public', n
 const COLS = ['members', 'deposits', 'loans', 'repayments', 'entries', 'notices'];
 const DEF_CFG = { name: '72 Ventures Pvt. Ltd.', shareValue: 200, minShares: 5, maxShares: 10, startMonth: '2026-11',
   loanRate: 8, loanLimitPct: 80, loanTermMax: 11, dueDay: 25, graceDays: 3, lateFee: 500,
-  allocInvest: 50, allocLoan: 35, allocReserve: 15, bank: '', chair: '', treasurer: '', openLedger: 'no' };
+  allocInvest: 50, allocLoan: 35, allocReserve: 15, bank: '', chair: '', treasurer: '', email: 'ventures72.official@gmail.com', openLedger: 'no' };
 
 /* ---------- storage ---------- */
 let db;
@@ -146,7 +146,7 @@ function save(admin, col, id, d) {
   d = d || {};
   if (col === 'cfg') {
     const c = {}; for (const k of ['shareValue', 'minShares', 'maxShares', 'loanRate', 'loanLimitPct', 'loanTermMax', 'dueDay', 'graceDays', 'lateFee', 'allocInvest', 'allocLoan', 'allocReserve']) c[k] = num(d[k]);
-    for (const k of ['name', 'bank', 'chair', 'treasurer']) c[k] = str(d[k]);
+    for (const k of ['name', 'bank', 'chair', 'treasurer', 'email']) c[k] = str(d[k]);
     c.startMonth = str(d.startMonth); c.openLedger = d.openLedger === 'yes' ? 'yes' : 'no';
     need(c.name && isMonth(c.startMonth) && c.shareValue > 0 && c.minShares >= 1 && c.maxShares >= c.minShares && c.allocInvest + c.allocLoan + c.allocReserve === 100);
     logIt(admin.name, 'edit', 'cfg', '', diff(db.cfg, c)); db.cfg = c; return;
@@ -223,7 +223,7 @@ async function handle(req, res) {
   const act = url.slice(5);
   if (req.method === 'GET') {
     if (act !== 'state') return send(res, 404, { error: 'not_found' });
-    const u = userFrom(req); return u ? send(res, 200, stateFor(u)) : send(res, 401, { error: 'sign_in' });
+    const u = userFrom(req); return u ? send(res, 200, stateFor(u)) : send(res, 401, { error: 'sign_in', email: db.cfg.email || '' });
   }
   if (req.method !== 'POST') return send(res, 405, { error: 'bad_input' });
   const origin = req.headers.origin;   // block posts sent from other websites

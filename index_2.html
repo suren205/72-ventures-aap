@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="ne"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>72 Ventures Khata</title>
+<meta name="theme-color" content="#12284a">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Rozha+One&display=swap">
+<style>
+/* Layout: navy masthead with the company seal, a tab rail, then one working sheet per tab. Money is always right-aligned in tabular figures. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --sunk:#eaeef3; --ink:#0f1b2d; --muted:#586a80; --line:#dbe2ea;
+  --accent:#0c8a7e; --accent-ink:#ffffff; --soft:#e2f3f0;
+  --head:#12284a; --head-ink:#f2f5fa; --head-muted:#a9b9d0; --gold:#c79a3a;
+  --good:#1c7f47; --good-bg:#e3f4ea; --warn:#9a6511; --warn-bg:#fbefd6; --bad:#b83227; --bad-bg:#fbe5e2; --blue:#2c5cc9;
+  --display:"Rozha One","Mukta",Georgia,serif;
+  --body:"Mukta","Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a121d; --surface:#111c2b; --sunk:#172436; --ink:#e7edf5; --muted:#93a4ba; --line:#25354a;
+  --accent:#2fc2b2; --accent-ink:#04211e; --soft:#12332f;
+  --head:#0e1b31; --head-ink:#f2f5fa; --head-muted:#93a4ba; --gold:#d6ab4c;
+  --good:#5fd08f; --good-bg:#123322; --warn:#e9b65a; --warn-bg:#3a2c10; --bad:#f08a80; --bad-bg:#3d1a17; --blue:#7fa4f5;
+  color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0a121d; --surface:#111c2b; --sunk:#172436; --ink:#e7edf5; --muted:#93a4ba; --line:#25354a;
+  --accent:#2fc2b2; --accent-ink:#04211e; --soft:#12332f;
+  --head:#0e1b31; --head-ink:#f2f5fa; --head-muted:#93a4ba; --gold:#d6ab4c;
+  --good:#5fd08f; --good-bg:#123322; --warn:#e9b65a; --warn-bg:#3a2c10; --bad:#f08a80; --bad-bg:#3d1a17; --blue:#7fa4f5;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+@media (max-width:560px){.top-tools{flex-basis:100%}}
+.pics{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:10px;max-width:560px}
+.pic{padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sunk);cursor:zoom-in;aspect-ratio:4/3}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs{display:flex;gap:10px;flex-wrap:wrap}
+.thumb{position:relative;width:84px;height:64px}
+.thumb img{width:100%;height:100%;object-fit:cover;border-radius:6px;display:block}
+.thumb button{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;border:0;background:var(--bad);color:var(--surface);font-weight:700;cursor:pointer;line-height:1}
+.big{width:100%;border-radius:8px;display:block}
+.login{max-width:380px;width:100%;margin:24px auto;display:flex;flex-direction:column;gap:14px}
+.login h2{font-family:var(--display);font-weight:400;font-size:24px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+
+/* masthead */
+.top{background:var(--head);color:var(--head-ink)}
+.top-in{max-width:1120px;margin:0 auto;padding:14px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.seal{width:60px;height:60px;flex:none;display:block}
+.login-logo{width:180px;max-width:70%;align-self:center;border-radius:10px}
+.brand{flex:1;min-width:0}
+.brand h1{font-family:var(--display);font-weight:400;font-size:clamp(20px,4.5vw,27px);line-height:1.2;text-wrap:balance}
+.brand p{color:var(--head-muted);font-size:14px}
+.top-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.role{font-size:13px;font-weight:600;padding:3px 10px;border-radius:99px;border:1px solid var(--head-muted);color:var(--head-ink)}
+.role.admin{border-color:var(--gold);color:var(--gold)}
+.lang{background:transparent;border:1px solid var(--head-muted);color:var(--head-ink);border-radius:99px;padding:3px 12px;font-size:13px;font-weight:600;cursor:pointer}
+
+/* tabs */
+.tabs-wrap{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.tabs{max-width:1120px;margin:0 auto;padding:0 8px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:11px 12px 8px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tabs button[aria-current="page"]{color:var(--accent);border-bottom-color:var(--accent)}
+
+main{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:20px 56px;display:flex;flex-direction:column;gap:20px}
+.bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.bar h2{font-family:var(--display);font-weight:400;font-size:24px}
+.bar .tools{display:flex;gap:8px;flex-wrap:wrap}
+.sub{color:var(--muted);font-size:14.5px}
+
+.btn{background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);border-radius:8px;padding:7px 14px;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn.sm{padding:3px 10px;font-size:14px}
+.btn[disabled]{opacity:.55;cursor:default}
+.link{background:none;border:0;padding:0;color:var(--accent);font-weight:600;cursor:pointer;text-align:left}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.panel h3{font-size:16px;font-weight:700;margin-bottom:10px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px}
+
+/* balance strip */
+.sheet{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.fig{padding:14px 16px;border-inline-start:1px solid var(--line);margin-inline-start:-1px;border-top:1px solid var(--line);margin-top:-1px}
+.fig .k{font-size:13.5px;color:var(--muted);font-weight:600}
+.fig .v{font-size:clamp(21px,3.4vw,28px);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25}
+.fig .n{font-size:13px;color:var(--muted)}
+.fig.main .v{color:var(--accent)}
+
+/* 12-month track */
+.track{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;align-items:end;height:120px}
+.track .col{display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:3px;min-width:0}
+.track .barv{background:var(--accent);border-radius:3px 3px 0 0;min-height:2px}
+.track .col.p2 .barv{background:var(--blue)}
+.track .col.zero .barv{background:var(--line)}
+.track .amt{font-size:11px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums;overflow:hidden;white-space:nowrap}
+.tlabels{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;margin-top:4px}
+.tlabels span{font-size:11.5px;text-align:center;color:var(--muted);border-top:2px solid var(--line);padding-top:3px;overflow:hidden;white-space:nowrap}
+.tlabels span.now{color:var(--ink);font-weight:700;border-top-color:var(--gold)}
+.phases{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:13px;font-weight:600}
+.phases span:first-child{color:var(--accent)} .phases span:last-child{color:var(--blue)}
+
+.meter{display:flex;flex-direction:column;gap:12px}
+.meter .row{display:flex;flex-direction:column;gap:4px}
+.meter .lab{display:flex;justify-content:space-between;gap:10px;font-size:14.5px}
+.meter .lab b{font-variant-numeric:tabular-nums}
+.meter .rail{height:9px;border-radius:9px;background:var(--sunk);overflow:hidden}
+.meter .rail i{display:block;height:100%;border-radius:9px;background:var(--accent)}
+.meter .rail i.b{background:var(--blue)} .meter .rail i.g{background:var(--gold)}
+
+.list{display:flex;flex-direction:column}
+.list .li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);align-items:baseline}
+.list .li:first-child{border-top:0}
+.list .li>div{min-width:0}
+.list small{color:var(--muted);display:block}
+
+.chip{display:inline-block;font-size:12.5px;font-weight:700;padding:1px 9px;border-radius:99px;white-space:nowrap;background:var(--sunk);color:var(--muted)}
+.chip.good{background:var(--good-bg);color:var(--good)} .chip.warn{background:var(--warn-bg);color:var(--warn)} .chip.bad{background:var(--bad-bg);color:var(--bad)}
+.in{color:var(--good)} .out{color:var(--bad)}
+
+.scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:700;white-space:nowrap;background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+tfoot td{font-weight:700;background:var(--sunk);border-top:1px solid var(--line)}
+td.num,th.num{text-align:right}
+.grid td,.grid th{padding:6px 6px;text-align:center}
+.grid th:first-child,.grid td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);padding-inline:12px;white-space:nowrap}
+.grid th:first-child,.grid tfoot td:first-child{background:var(--sunk)}
+.grid th.now{color:var(--ink);box-shadow:inset 0 -3px var(--gold)}
+.cell{display:inline-grid;place-items:center;min-width:34px;height:30px;border-radius:6px;border:1px solid transparent;background:none;font-weight:700;font-variant-numeric:tabular-nums}
+button.cell{cursor:pointer;border-color:var(--line)}
+.cell.paid{background:var(--soft);color:var(--accent);border-color:transparent}
+.cell.due{background:var(--warn-bg);color:var(--warn);font-size:12px;border-color:transparent}
+
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.empty h3{font-family:var(--display);font-weight:400;font-size:21px}
+.empty p{color:var(--muted);max-width:52ch}
+
+.notice{border-top:1px solid var(--line);padding:14px 0}
+.notice:first-child{border-top:0;padding-top:0}
+.notice h3{margin-bottom:2px}
+.notice p{white-space:pre-wrap;max-width:70ch}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px}
+.rules ul{margin:0;padding-inline-start:18px;display:flex;flex-direction:column;gap:5px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:15px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;text-align:right}
+
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:0;width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 40px)}
+dialog::backdrop{background:rgba(5,12,24,.55)}
+.dlg-in{padding:18px;display:flex;flex-direction:column;gap:14px}
+.dlg-in h2{font-family:var(--display);font-weight:400;font-size:21px}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:14px;font-weight:600;color:var(--muted)}
+.fld input,.fld select,.fld textarea{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+.fld textarea{min-height:110px;resize:vertical}
+.fld .fixed{font-weight:700}
+.live{font-size:14px;background:var(--sunk);border-radius:8px;padding:8px 10px}
+.err{color:var(--bad);font-weight:600;font-size:14.5px}
+.dlg-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.dlg-foot .sp{flex:1}
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--head);color:var(--head-ink);padding:8px 16px;border-radius:99px;font-weight:600;font-size:14.5px;max-width:calc(100vw - 32px);z-index:20}
+</style>
+</head><body>
+
+<header class="top"><div class="top-in">
+  <img class="seal" src="/seal.png" alt="72 Ventures seal">
+  <div class="brand"><h1 id="brand-name">७२ भेन्चर्स खाता</h1><p id="brand-sub"></p></div>
+  <div class="top-tools"><span class="role" id="role"></span><button class="lang" id="lang" data-act="lang"></button><button class="lang" id="install" data-act="install" hidden></button><button class="lang" id="logout" data-act="logout" hidden></button></div>
+</div></header>
+<div class="tabs-wrap"><nav class="tabs" id="tabs" aria-label="Sections"></nav></div>
+<main id="view"></main>
+<dialog id="dlg"></dialog>
+<div id="toast" hidden></div>
+
+<script>
+const T={
+ sub:['SLC 2072 batch · shared savings and loan record','SLC २०७२ ब्याच · सामूहिक बचत तथा कर्जा अभिलेख'],
+ admin:['Admin','एडमिन'], viewer:['View only','हेर्न मात्र'],
+ home:['Dashboard','ड्यासबोर्ड'], members:['Members','सदस्यहरू'], savings:['Monthly savings','मासिक बचत'], loans:['Loans','कर्जा'], ledger:['Ledger','लेजर'], notices:['Notices','सूचना'], plan:['Rules','नियम'], settings:['Settings','सेटिङ'],
+ me:['My account','मेरो खाता'], me_pick_h:['Which member are you?','तपाईं कुन सदस्य हुनुहुन्छ?'], me_pick_p:['Pick your name once. This phone or computer will remember it.','एक पटक आफ्नो नाम छान्नुहोस्। यो फोन वा कम्प्युटरले सम्झिनेछ।'], me_change:['Not you? Change','तपाईं होइन? बदल्नुहोस्'], me_months:['My monthly payments','मेरो मासिक भुक्तानी'], me_loans:['My loans','मेरो कर्जा'], later:['Later','आउन बाँकी'],
+ login_h:['Sign in','साइन इन'], login_id:['Login ID','लगइन आईडी'], password:['Password','पासवर्ड'], sign_in:['Sign in','साइन इन गर्नुहोस्'], sign_out:['Sign out','साइन आउट'],
+ chg_pass:['Change password','पासवर्ड बदल्नुहोस्'], cur_pass:['Current password','हालको पासवर्ड'], new_pass:['New password (8 or more characters)','नयाँ पासवर्ड (८ वा बढी अक्षर)'], rep_pass:['New password again','नयाँ पासवर्ड फेरि'], must_change:['Set your own password before you continue. Use the password you were given as the current one.','अगाडि बढ्नुअघि आफ्नै पासवर्ड राख्नुहोस्। तपाईंलाई दिइएको पासवर्ड हालको पासवर्डमा लेख्नुहोस्।'],
+ e_match:['The two new passwords do not match.','दुई नयाँ पासवर्ड मिलेनन्।'],
+ x_bad_login:['Wrong login ID or password.','लगइन आईडी वा पासवर्ड मिलेन।'], x_locked:['Too many tries. Wait 15 minutes and try again.','धेरै पटक प्रयास भयो। १५ मिनेट पर्खेर फेरि प्रयास गर्नुहोस्।'], x_weak_password:['The password must have 8 or more characters.','पासवर्ड ८ वा बढी अक्षरको हुनुपर्छ।'], x_wrong_password:['The current password is wrong.','हालको पासवर्ड मिलेन।'], x_login_taken:['This login ID is already used.','यो लगइन आईडी पहिले नै प्रयोगमा छ।'], x_bad_login_id:['Give a login ID of 3 to 30 small letters, numbers, dots or dashes.','३ देखि ३० साना अक्षर, अंक, डट वा ड्यासको लगइन आईडी दिनुहोस्।'], x_self_admin:['You cannot remove your own admin account.','आफ्नै एडमिन खाता हटाउन मिल्दैन।'], x_denied:['Only the admin can change records.','एडमिनले मात्र अभिलेख परिवर्तन गर्न सक्छन्।'],
+ set_pass:['New password for this member (leave empty to keep the old one)','यो सदस्यको नयाँ पासवर्ड (पुरानै राख्न खाली छोड्नुहोस्)'], is_admin:['Admin rights','एडमिन अधिकार'], yes:['Yes','हो'], no:['No','होइन'], no_login:['No login yet','लगइन बनाइएको छैन'],
+ open_ledger:['Members can see the whole group record','सदस्यले सम्पूर्ण समूह अभिलेख हेर्न सक्छन्'], only_count:['Only the admin sees who has paid.','कसले तिर्‍यो भन्ने एडमिनले मात्र देख्छन्।'],
+ su_link:['First time here? Create your account','पहिलो पटक? आफ्नो खाता बनाउनुहोस्'], su_h:['Create your account','आफ्नो खाता बनाउनुहोस्'], su_p:['Choose your own login ID and password. The admin will approve your account, and then you can sign in.','आफ्नै लगइन आईडी र पासवर्ड छान्नुहोस्। एडमिनले खाता स्वीकृत गरेपछि साइन इन गर्न सक्नुहुन्छ।'], su_btn:['Create account','खाता बनाउनुहोस्'], su_back:['I already have an account','मसँग खाता छ'], su_done:['Your account is created. You can sign in after the admin approves it.','तपाईंको खाता बन्यो। एडमिनले स्वीकृत गरेपछि साइन इन गर्न सक्नुहुन्छ।'], rep_pw:['Password again','पासवर्ड फेरि'], pw8:['Password (8 or more characters)','पासवर्ड (८ वा बढी अक्षर)'], e_match2:['The two passwords do not match.','दुई पासवर्ड मिलेनन्।'],
+ x_pending:['Your account is waiting for the admin to approve it.','तपाईंको खाता एडमिनको स्वीकृति पर्खिरहेको छ।'], x_signup_full:['Too many accounts are waiting. Ask the admin to approve them first.','धेरै खाता स्वीकृति पर्खिरहेका छन्। पहिले एडमिनलाई स्वीकृत गर्न भन्नुहोस्।'],
+ waiting:['Waiting for your approval','तपाईंको स्वीकृति पर्खिरहेका'], approve:['Approve','स्वीकृत गर्नुहोस्'], reject:['Remove','हटाउनुहोस्'], asked_on:['asked on','अनुरोध मिति'],
+ history:['Change history','परिवर्तन इतिहास'], h_hint:['Every change is written here with the name and the time. Only admins see this tab. Nobody can edit or delete it in the app.','हरेक परिवर्तन नाम र समयसहित यहाँ लेखिन्छ। यो ट्याब एडमिनले मात्र देख्छन्। एपबाट यसलाई कसैले सम्पादन वा मेटाउन सक्दैन।'], h_when:['When','समय'], h_who:['Who','कसले'], h_what:['What','के'], h_add:['Added','थपियो'], h_edit:['Changed','परिवर्तन'], h_delete:['Deleted','मेटाइयो'], h_signup:['Signed up','खाता बनायो'], h_none:['No changes yet.','अहिलेसम्म कुनै परिवर्तन छैन।'],
+ nominee:['Nominee','हकवाला'], nominee_name:['Nominee name (हकवाला)','हकवालाको नाम'], nominee_rel:['Nominee relation (e.g. father, wife)','हकवालासँगको नाता (जस्तै बुबा, श्रीमती)'], nominee_phone:['Nominee phone','हकवालाको फोन'], no_nominee:['No nominee yet','हकवाला राखिएको छैन'],
+ proof:['Payment proof photo (up to 2)','भुक्तानी प्रमाण फोटो (बढीमा २)'], see_proof:['Proof','प्रमाण'],
+ photos:['Photos (up to 4)','फोटोहरू (बढीमा ४)'], uploading:['Uploading photo…','फोटो अपलोड हुँदैछ…'], x_bad_image:['Could not upload this photo. Please try another one.','यो फोटो अपलोड हुन सकेन। अर्को फोटो प्रयास गर्नुहोस्।'],
+ email:['Official email','आधिकारिक इमेल'], contact:['Contact','सम्पर्क'], help_mail:['Need help? Write to','सहयोग चाहियो? इमेल गर्नुहोस्'],
+ serial:['Member No.','सदस्य नं.'],
+ install:['Install app','एप इन्स्टल गर्नुहोस्'],
+ loading:['Loading records…','अभिलेख लोड हुँदैछ…'],
+ nodb_h:['Cannot reach the server','सर्भरसँग जोडिन सकिएन'],
+ nodb_p:['Check your internet and open the page again.','इन्टरनेट जाँचेर पेज फेरि खोल्नुहोस्।'],
+ empty_h:['No records yet','अहिलेसम्म कुनै अभिलेख छैन'],
+ empty_admin:['Start by adding the members. Then record each monthly share payment on the Monthly savings tab.','पहिले सदस्यहरू थप्नुहोस्। त्यसपछि मासिक बचत ट्याबमा हरेक महिनाको शेयर भुक्तानी दर्ता गर्नुहोस्।'],
+ empty_view:['The admin has not added any members yet. Savings, loans and notices will show here as soon as they are entered.','एडमिनले अझै सदस्य थपेका छैनन्। बचत, कर्जा र सूचना दर्ता हुनासाथ यहाँ देखिनेछ।'],
+ total_sav:['Total savings','जम्मा बचत'], on_loan:['Out on loan','कर्जामा रहेको'], int_earned:['Interest earned','ब्याज आम्दानी'], cash:['Cash in bank','बैंक मौज्दात'],
+ n_members:['{0} members · {1} shares','{0} सदस्य · {1} कित्ता'], n_loans:['{0} open loans','{0} खुला कर्जा'], from_loans:['from member loans','सदस्य कर्जाबाट'], should_match:['should match the joint account','संयुक्त खातासँग मिल्नुपर्छ'],
+ year:['12-month savings track','१२ महिने बचत यात्रा'], phase1:['Phase 1 · collecting capital','चरण १ · पूँजी संकलन'], phase2:['Phase 2 · loans and growth','चरण २ · कर्जा तथा सुदृढीकरण'],
+ phase_now:['Now: month {0} of 12','अहिले: १२ मध्ये महिना {0}'], phase_before:['Savings start in {0}','बचत {0} देखि सुरु हुन्छ'], phase_after:['12 months done · time to register the company','१२ महिना पूरा · कम्पनी दर्ता गर्ने समय'],
+ split:['How the fund is split','कोषको बाँडफाँड'], inv:['Business investment','व्यापार लगानी'], loanpool:['Member loan pool','सदस्य कर्जा कोष'], reserve:['Emergency reserve','आपत्कालीन जगेडा'],
+ lent_of:['{0} lent of {1}','{1} मध्ये {0} कर्जामा'], kept:['{0} kept aside','{0} छुट्याइएको'],
+ this_month:['This month','यो महिना'], paid_n:['{0} of {1} paid','{1} मध्ये {0} ले तिरे'], paid:['Paid','तिरेको'], due:['Due','बाँकी'],
+ recent:['Recent entries','पछिल्ला कारोबार'], latest_notice:['Latest notice','पछिल्लो सूचना'], none_yet:['Nothing yet','अहिलेसम्म छैन'], see_all:['See all','सबै हेर्नुहोस्'],
+ add_member:['Add member','सदस्य थप्नुहोस्'], edit_member:['Edit member','सदस्य सम्पादन'], name:['Full name','पूरा नाम'], phone:['Phone','फोन'], role:['Role','भूमिका'], joined:['Joined on','सामेल मिति'], status:['Status','स्थिति'], active:['Active','सक्रिय'], left:['Left','छाडेको'], note:['Note','टिप्पणी'],
+ r_member:['Member','सदस्य'], r_chair:['Chairperson','अध्यक्ष'], r_treasurer:['Treasurer','कोषाध्यक्ष'], r_secretary:['Secretary','सचिव'],
+ shares:['Shares','कित्ता'], saved:['Saved','बचत'], loan_out:['Loan owed','कर्जा बाँकी'], loan_limit:['Can borrow up to','कर्जा लिन सक्ने'], statement:['Statement','विवरण'],
+ has_records:['This member has savings or loan records. Set the status to Left instead.','यो सदस्यको बचत वा कर्जा अभिलेख छ। मेटाउनुको सट्टा स्थिति "छाडेको" राख्नुहोस्।'],
+ rec_pay:['Record payment','भुक्तानी दर्ता'], month:['Month','महिना'], n_shares:['Number of shares','कित्ता संख्या'], paid_on:['Paid on','तिरेको मिति'], amount:['Amount','रकम'], total:['Total','जम्मा'],
+ share_range:['Shares must be between {0} and {1}.','कित्ता {0} देखि {1} सम्म हुनुपर्छ।'], grid_hint:['Each box shows the shares bought that month. One share is {0}.','हरेक कोठामा त्यो महिना किनेको कित्ता देखिन्छ। एक कित्ता {0} हो।'], grid_admin:['Tap a box to record or change a payment.','भुक्तानी दर्ता वा परिवर्तन गर्न कोठामा थिच्नुहोस्।'],
+ new_loan:['New loan','नयाँ कर्जा'], edit_loan:['Edit loan','कर्जा सम्पादन'], borrower:['Borrower','ऋणी'], principal:['Principal','साँवा'], rate:['Interest rate (% a year)','ब्याजदर (% वार्षिक)'], rate_s:['Rate','दर'], issued:['Given on','निकासा मिति'], term:['Pay back within (months)','फिर्ता अवधि (महिना)'], due_date:['Due date','भुक्तानी मिति'], repaid:['Repaid','फिर्ता'], outstanding:['Still owed','बाँकी साँवा'], purpose:['Purpose','प्रयोजन'],
+ s_active:['Active','चालु'], s_overdue:['Overdue','म्याद नाघेको'], s_closed:['Paid off','चुक्ता'],
+ repay:['Record repayment','फिर्ता दर्ता'], details:['Details','विवरण'], pay_principal:['Principal paid','साँवा फिर्ता'], pay_interest:['Interest paid','ब्याज भुक्तानी'], repayments:['Repayments','फिर्ता विवरण'], interest:['Interest','ब्याज'],
+ live_limit:['Savings {0} · limit {1} · already owes {2} · can borrow {3}','बचत {0} · सीमा {1} · बाँकी कर्जा {2} · लिन सक्ने {3}'], live_pool:['Loan pool left: {0} · cash in bank: {1}','कर्जा कोषमा बाँकी: {0} · बैंक मौज्दात: {1}'],
+ live_repay:['Still owed {0} · interest since last payment is about {1}','बाँकी साँवा {0} · पछिल्लो भुक्तानीदेखिको ब्याज करिब {1}'],
+ e_limit:['This is more than the member can borrow ({0}).','यो रकम सदस्यले लिन सक्ने सीमा ({0}) भन्दा बढी छ।'], e_cash:['There is not enough cash in the bank ({0}).','बैंकमा पर्याप्त मौज्दात छैन ({0})।'], e_term:['The term can be at most {0} months.','अवधि बढीमा {0} महिना हुन सक्छ।'], e_over:['This is more than the amount still owed ({0}).','यो रकम बाँकी साँवा ({0}) भन्दा बढी छ।'], e_need:['Please fill in: {0}','कृपया भर्नुहोस्: {0}'], e_alloc:['The three shares of the fund must add up to 100%.','कोषका तीन हिस्सा जोड्दा १००% हुनुपर्छ।'], e_month:['Write the start month as YYYY-MM, for example 2026-11.','सुरु महिना YYYY-MM ढाँचामा लेख्नुहोस्, जस्तै 2026-11।'], e_save:['Could not save. Check your connection and try again.','सेभ हुन सकेन। इन्टरनेट जाँचेर फेरि प्रयास गर्नुहोस्।'], e_denied:['Only the admin can change records.','एडमिनले मात्र अभिलेख परिवर्तन गर्न सक्छन्।'],
+ no_loans:['No loans have been given yet.','अहिलेसम्म कुनै कर्जा दिइएको छैन।'],
+ add_entry:['Other income or expense','अन्य आम्दानी वा खर्च'], kind:['Type','प्रकार'], income:['Income','आम्दानी'], expense:['Expense','खर्च'], category:['What for','शीर्षक'], date:['Date','मिति'], desc:['Details','विवरण'], money_in:['In','आम्दानी'], money_out:['Out','निकासा'], balance:['Balance','मौज्दात'], all:['All entries','सबै कारोबार'],
+ l_dep:['Share payment','शेयर भुक्तानी'], l_loan:['Loan given','कर्जा निकासा'], l_rep:['Loan repayment','कर्जा फिर्ता'],
+ no_ledger:['No entries match.','कुनै कारोबार भेटिएन।'],
+ add_notice:['Post a notice','सूचना राख्नुहोस्'], edit_notice:['Edit notice','सूचना सम्पादन'], title:['Title','शीर्षक'], message:['Message','विवरण'], no_notices:['No notices yet. Meeting dates and decisions will show here.','अहिलेसम्म सूचना छैन। बैठक मिति र निर्णयहरू यहाँ देखिनेछन्।'],
+ save:['Save','सेभ गर्नुहोस्'], saving:['Saving…','सेभ हुँदैछ…'], cancel:['Cancel','रद्द'], close:['Close','बन्द'], del:['Delete','मेटाउनुहोस्'], del_sure:['Tap again to delete','मेटाउन फेरि थिच्नुहोस्'], edit:['Edit','सम्पादन'], saved_ok:['Saved','सेभ भयो'], deleted_ok:['Deleted','मेटाइयो'],
+ edit_settings:['Edit settings','सेटिङ सम्पादन'], co_name:['Company name','कम्पनीको नाम'], share_value:['Price of one share','प्रति कित्ता मूल्य'], min_sh:['Fewest shares a month','न्यूनतम मासिक कित्ता'], max_sh:['Most shares a month','अधिकतम मासिक कित्ता'], start_m:['First savings month (YYYY-MM)','पहिलो बचत महिना (YYYY-MM)'], limit_pct:['Loan limit (% of own savings)','कर्जा सीमा (आफ्नो बचतको %)'], term_max:['Longest loan term (months)','अधिकतम कर्जा अवधि (महिना)'], a_inv:['Business investment %','व्यापार लगानी %'], a_loan:['Member loan pool %','सदस्य कर्जा कोष %'], a_res:['Emergency reserve %','आपत्कालीन जगेडा %'], bank:['Joint bank account (bank and branch)','संयुक्त बैंक खाता (बैंक र शाखा)'], chair:['Chairperson','अध्यक्ष'], treasurer:['Treasurer','कोषाध्यक्ष'],
+ settings_hint:['Only admins see this tab. Members see the same numbers on the Rules tab.','यो ट्याब एडमिनले मात्र देख्छन्। सदस्यहरूले यिनै अंक नियम ट्याबमा देख्छन्।'],
+ ru_share:['Shares','शेयर संरचना'], ru_loan:['Loans to members','सदस्य कर्जा'], ru_fund:['Fund split','कोष बाँडफाँड'], ru_road:['Road map','मार्गचित्र'], ru_mou:['Founders’ agreement (MOU)','संस्थापक सम्झौता (MOU)'], ru_trust:['Transparency','पारदर्शिता'],
+ ru_s1:['One share costs {0}.','एक कित्ताको मूल्य {0}।'], ru_s2:['Each member buys {0} to {1} shares every month ({2} to {3}) and pays by day {4} of the month.','हरेक सदस्यले हरेक महिनाको {4} गतेभित्र {0} देखि {1} कित्ता ({2} देखि {3}) किनी संयुक्त खातामा जम्मा गर्छन्।'],
+ ru_s4:['Paying more than {0} days late costs a late fee of {1} for that month.','तोकिएको मितिभन्दा {0} दिन ढिला भए त्यो महिना {1} विलम्ब शुल्क लाग्छ।'],
+ ru_s5:['Savings run for 12 months in a row from the agreement date.','बचत संकलन सम्झौता मितिदेखि लगातार १२ महिना चल्छ।'],
+ ru_m4:['A member who harms the group, or misses 3 months in a row without notice, can be removed by a majority vote.','समूहको अहित हुने काम गरेमा वा लगातार ३ महिना जानकारी बिना किस्ता नबुझाएमा साधारण सभाको बहुमतबाट अलग गर्न सकिन्छ।'],
+ ru_m5:['A board of 3 to 5 directors is chosen when the company is registered.','कम्पनी दर्ता गर्दा ३ देखि ५ जनाको सञ्चालक समिति चयन गरिन्छ।'],
+ late_fee:['Late fee','विलम्ब शुल्क'], late_hint:['Rule: pay by day {0}. More than {1} days late costs {2}.','नियम: {0} गतेभित्र तिर्नुपर्छ। {1} दिनभन्दा ढिला भए {2} विलम्ब शुल्क।'],
+ address:['Permanent address','स्थायी ठेगाना'], missed:['{0} months missed','{0} महिना छुटेको'], star:['* late fee paid','* विलम्ब शुल्क तिरेको'], fees_note:['late fees: {0}','विलम्ब शुल्क: {0}'],
+ due_day:['Pay by (day of the month)','तिर्ने अन्तिम गते'], grace:['Extra days allowed','थप छुट दिन'], fee_amt:['Late fee amount','विलम्ब शुल्क रकम'], ru_s3:['After 12 months the savings turn into founder equity of the same value.','१२ महिनापछि जम्मा रकम बराबरको संस्थापक इक्विटी शेयरमा रूपान्तरण हुन्छ।'],
+ ru_l1:['A member can borrow up to {0}% of their own savings.','सदस्यले आफ्नो बचतको {0}% सम्म कर्जा लिन सक्छन्।'], ru_l2:['Interest is {0}% a year. It goes back into the shared fund.','ब्याज वार्षिक {0}%। ब्याज सामूहिक कोषमै थपिन्छ।'], ru_l3:['Loans are paid back within {0} months, before the company is registered.','कर्जा {0} महिनाभित्र, कम्पनी दर्ता हुनुअघि फिर्ता गर्नुपर्छ।'],
+ ru_r1:['Months 1 to 6: buy shares every month and grow the fund in the joint account.','महिना १ देखि ६: मासिक शेयर खरिद र संयुक्त खातामा कोष विस्तार।'], ru_r2:['Months 7 to 12: lend to members and earn interest.','महिना ७ देखि १२: सदस्यलाई कर्जा परिचालन र ब्याजबाट थप मुनाफा।'], ru_r3:['After 1 year: register the company and start business.','१ वर्षपछि: कम्पनी रजिस्ट्रारमा दर्ता गरी व्यापार सुरु।'],
+ ru_m1:['Written promise: a fixed savings date and share amount every month.','लिखित प्रतिबद्धता: मासिक बचत मिति र शेयर किस्ताको स्पष्ट मापदण्ड।'], ru_m2:['Exit: a member who leaves within the year gets back only the money they saved. No interest or profit can be claimed before the company is registered.','बहिर्गमन: १ वर्षभित्र छाड्ने सदस्यले आफूले जम्मा गरेको मूल रकम मात्र फिर्ता पाउँछन्। संस्था दर्ता नभएसम्म ब्याज वा नाफा दाबी गर्न पाइँदैन।'], ru_m3:['Choosing a business needs at least a two-thirds vote.','व्यवसाय छनोटमा कम्तीमा दुई-तिहाइ बहुमत आवश्यक।'],
+ ru_t1:['Joint account in a class A or B commercial bank, run by two signatures: chairperson and treasurer or secretary.','\u2018क\u2019 वा \u2018ख\u2019 वर्गको वाणिज्य बैंकमा संयुक्त खाता: अध्यक्ष र कोषाध्यक्ष/सचिवको संयुक्त दस्तखत।'], ru_t2:['Every member can sign in and check their own account at any time.','हरेक सदस्यले जुनसुकै बेला साइन इन गरी आफ्नो खाता हेर्न सक्छन्।'], ru_t3:['Income and spending are reviewed in the first week of every month.','हरेक महिनाको पहिलो हप्ता आय-व्यय समीक्षा।'],
+};
+const S={cfg:null,members:[],deposits:[],loans:[],repays:[],entries:[],notices:[],admin:false,open:false,G:null,pending:[],log:[],note:'',state:'loading',lang:'ne',tab:'home',filter:'all',me:''};
+const DEF={name:'72 Ventures Pvt. Ltd.',shareValue:200,minShares:5,maxShares:10,startMonth:'2026-11',loanRate:8,loanLimitPct:80,loanTermMax:11,dueDay:25,graceDays:3,lateFee:500,allocInvest:50,allocLoan:35,allocReserve:15,bank:'',chair:'',treasurer:'',email:'ventures72.official@gmail.com',openLedger:'no'};
+const TABS=['home','me','members','savings','loans','ledger','notices','plan','history','settings'];
+let C=null;
+const LIMITED=['home','me','notices','plan'];
+const canSee=x=>S.admin||(x!=='settings'&&x!=='history'&&(S.open||LIMITED.includes(x)));
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>{const n=Number(v);return isFinite(n)?n:0};
+const li=()=>S.lang==='ne'?1:0;
+const t=(k,...a)=>{let s=(T[k]||[k,k])[li()];a.forEach((v,i)=>s=s.replace('{'+i+'}',v));return s};
+const loc=()=>S.lang==='ne'?'ne-NP':'en-IN';
+const fmt=n=>new Intl.NumberFormat(loc(),{maximumFractionDigits:0}).format(Math.round(num(n)));
+const kf=a=>new Intl.NumberFormat(loc(),{maximumFractionDigits:1}).format(a/1000)+'k';
+const money=n=>(S.lang==='ne'?'रु. ':'Rs. ')+fmt(n);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>iso(new Date());
+const parse=s=>{const [y,m,d]=String(s||'').split('-').map(Number);return new Date(y||2000,(m||1)-1,d||1)};
+const addMonths=(s,n)=>{const d=parse(s);return iso(new Date(d.getFullYear(),d.getMonth()+n,d.getDate()))};
+const fdate=s=>s?new Intl.DateTimeFormat(loc(),{day:'numeric',month:'short',year:'numeric'}).format(parse(s)):'';
+const fmonth=(ym,long)=>new Intl.DateTimeFormat(loc(),long?{month:'long',year:'numeric'}:{month:'short'}).format(parse(ym+'-01'));
+const cfg=()=>{const c=Object.assign({},DEF,S.cfg||{});if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(c.startMonth))c.startMonth=DEF.startMonth;return c};
+const months=()=>{const d=parse(cfg().startMonth+'-01');return Array.from({length:12},(_,i)=>iso(new Date(d.getFullYear(),d.getMonth()+i,1)).slice(0,7))};
+const sn=m=>m&&m.serial?'72V-'+String(m.serial).padStart(3,'0'):'—';
+const bySerial=(a,b)=>(a.serial||1e9)-(b.serial||1e9)||String(a.name).localeCompare(b.name);
+const roleName=r=>t('r_'+(['chair','treasurer','secretary'].includes(r)?r:'member'));
+
+function calc(){
+  const c=cfg(), mBy={}; S.members.forEach(m=>mBy[m.id]=m);
+  const sav={}, shr={}; let dep=0, shares=0, fees=0;
+  S.deposits.forEach(d=>{sav[d.memberId]=(sav[d.memberId]||0)+num(d.amount);shr[d.memberId]=(shr[d.memberId]||0)+num(d.shares);dep+=num(d.amount);shares+=num(d.shares);fees+=num(d.fee)});
+  const paid={}, last={}; let repP=0, repI=0;
+  S.repays.forEach(r=>{paid[r.loanId]=(paid[r.loanId]||0)+num(r.principal);repP+=num(r.principal);repI+=num(r.interest);if(!last[r.loanId]||r.date>last[r.loanId])last[r.loanId]=r.date});
+  let lent=0, out=0; const owe={}, td=today();
+  const loans=S.loans.map(l=>{const o=Math.max(0,num(l.principal)-(paid[l.id]||0));lent+=num(l.principal);out+=o;owe[l.memberId]=(owe[l.memberId]||0)+o;
+    const dueOn=addMonths(l.issued,num(l.term));const from=last[l.id]&&last[l.id]>l.issued?last[l.id]:l.issued;
+    const days=Math.max(0,Math.round((parse(td)-parse(from))/864e5));
+    return {...l,out:o,repaid:paid[l.id]||0,dueOn,status:o<=0?'closed':(td>dueOn?'overdue':'active'),accrued:Math.round(o*num(l.rate)/100*days/365)}});
+  let inc=0, exp=0; S.entries.forEach(e=>e.kind==='expense'?exp+=num(e.amount):inc+=num(e.amount));
+  const cash=dep+fees+repP+repI+inc-exp-lent, capital=dep+fees+repI+inc-exp;
+  const pool=capital*num(c.allocLoan)/100;
+  const limit=id=>Math.max(0,(sav[id]||0)*num(c.loanLimitPct)/100-(owe[id]||0));
+  return {c,mBy,sav,shr,dep,shares,fees,repI,lent,out,owe,loans,inc,exp,cash,capital,pool,poolLeft:Math.max(0,pool-out),limit,nm:id=>mBy[id]?mBy[id].name:'—'};
+}
+function ledgerRows(){
+  const r=[];
+  S.deposits.forEach(d=>{r.push({date:d.date||d.month+'-01',type:'dep',desc:C.nm(d.memberId)+' · '+fmonth(d.month,true)+' · '+fmt(d.shares)+' '+t('shares'),in:num(d.amount),out:0});if(num(d.fee)>0)r.push({date:d.date||d.month+'-01',type:'fee',desc:C.nm(d.memberId)+' · '+fmonth(d.month,true),in:num(d.fee),out:0})});
+  S.loans.forEach(l=>r.push({date:l.issued,type:'loan',desc:C.nm(l.memberId)+(l.purpose?' · '+l.purpose:''),in:0,out:num(l.principal)}));
+  S.repays.forEach(p=>{const l=S.loans.find(x=>x.id===p.loanId);r.push({date:p.date,type:'rep',desc:(l?C.nm(l.memberId):'—')+' · '+t('principal')+' '+fmt(p.principal)+' + '+t('interest')+' '+fmt(p.interest),in:num(p.principal)+num(p.interest),out:0})});
+  S.entries.forEach(e=>r.push({date:e.date,type:e.kind==='expense'?'expense':'income',desc:[e.category,e.note].filter(Boolean).join(' · '),in:e.kind==='expense'?0:num(e.amount),out:e.kind==='expense'?num(e.amount):0,id:e.id}));
+  r.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+  let bal=0; r.forEach(x=>{bal+=x.in-x.out;x.bal=bal});
+  return r;
+}
+const typeName=k=>({dep:t('l_dep'),loan:t('l_loan'),rep:t('l_rep'),fee:t('late_fee'),income:t('income'),expense:t('expense')}[k]);
+
+/* ---------- views ---------- */
+function chrome(){
+  document.documentElement.lang=S.lang;
+  $('#brand-name').textContent=S.lang==='ne'?'७२ भेन्चर्स खाता':'72 Ventures Khata';
+  $('#brand-sub').textContent=t('sub');
+  const r=$('#role'); r.textContent=S.admin?t('admin'):t('viewer'); r.className='role'+(S.admin?' admin':''); r.hidden=S.state!=='ready';
+  $('#install').textContent=t('install'); $('#install').hidden=!installEvt;
+  const lo=$('#logout'); lo.textContent=t('sign_out'); lo.hidden=!(S.state==='ready'||S.state==='setpass');
+  $('#lang').textContent=S.lang==='ne'?'English':'नेपाली';
+  $('#tabs').innerHTML=(S.state==='ready'?TABS.filter(canSee):[]).map(x=>`<button data-act="tab" data-id="${x}" ${x===S.tab?'aria-current="page"':''}>${t(x)}${x==='members'&&S.pending.length?' ('+fmt(S.pending.length)+')':''}</button>`).join('');
+}
+function render(){
+  if(!canSee(S.tab))S.tab='home';
+  chrome();
+  const v=$('#view');
+  if(S.state==='loading'){v.innerHTML=`<div class="empty"><p>${t('loading')}</p></div>`;return}
+  if(S.state==='login'||S.state==='setpass'||S.state==='signup'){const st=S.state, f=(id,k,ty,ac,opt)=>`<div class="fld"><label for="${id}">${t(k)}</label><input id="${id}" type="${ty}" autocomplete="${ac}" ${opt?'':'required'}></div>`;
+    if(v.querySelector('#auth-form[data-k="'+st+S.lang+'"]'))return;
+    const inner=st==='setpass'?`<h2>${t('chg_pass')}</h2><p class="sub">${t('must_change')}</p>`+f('a-cur','cur_pass','password','current-password')+f('a-new','new_pass','password','new-password')+f('a-rep','rep_pass','password','new-password')
+      :st==='signup'?`<h2>${t('su_h')}</h2><p class="sub">${t('su_p')}</p>`+f('a-name','name','text','name')+f('a-phone','phone','tel','tel',1)+f('a-id','login_id','text','username')+f('a-new','pw8','password','new-password')+f('a-rep','rep_pw','password','new-password')
+      :`<h2>${t('login_h')}</h2>${S.note?`<p class="chip good" style="white-space:normal;border-radius:8px;padding:6px 10px">${esc(S.note)}</p>`:''}`+f('a-id','login_id','text','username')+f('a-pw','password','password','current-password');
+    v.innerHTML=`<form class="panel login" id="auth-form" data-k="${st+S.lang}"><img class="login-logo" src="/logo.jpg" alt="72 Ventures Pvt. Ltd.">${inner}<div class="err" id="auth-err" hidden></div><button class="btn">${st==='setpass'?t('save'):st==='signup'?t('su_btn'):t('sign_in')}</button>${st==='login'?`<button type="button" class="link" data-act="go-signup">${t('su_link')}</button>${S.pubEmail?`<p class="sub" style="text-align:center">${t('help_mail')}: <b>${esc(S.pubEmail)}</b></p>`:''}`:st==='signup'?`<button type="button" class="link" data-act="go-login">${t('su_back')}</button>`:''}</form>`;return}
+  if(S.state==='nodb'){v.innerHTML=`<div class="empty"><h3>${t('nodb_h')}</h3><p>${t('nodb_p')}</p></div>`;return}
+  C=calc();
+  v.innerHTML=({home:vHome,me:vMe,members:vMembers,savings:vSavings,loans:vLoans,ledger:vLedger,notices:vNotices,plan:vPlan,history:vHistory,settings:vSettings}[S.tab])();
+}
+const emptyBox=()=>`<div class="empty"><h3>${t('empty_h')}</h3><p>${S.admin?t('empty_admin'):t('empty_view')}</p>${S.admin?`<button class="btn" data-act="add-member">${t('add_member')}</button>`:''}</div>`;
+const head=(title,tools,sub)=>`<div><div class="bar"><h2>${title}</h2><div class="tools">${S.admin?tools||'':''}</div></div>${sub?`<p class="sub">${sub}</p>`:''}</div>`;
+
+function vHome(){
+  const G=S.G, c=C.c, pool=G.capital*num(c.allocLoan)/100, ms=months(), nowYm=today().slice(0,7), idx=ms.indexOf(nowYm);
+  const act=S.members.filter(m=>m.status!=='left'), nAct=G.active, nPaid=G.paid[nowYm]||0;
+  const perM=ms.map(ym=>G.perMonth[ym]||0);
+  const mx=Math.max(1,...perM);
+  const phase=nowYm<ms[0]?t('phase_before',fmonth(ms[0],true)):idx>=0?t('phase_now',fmt(idx+1)):t('phase_after');
+  const openL=G.openLoans;
+  const pct=(a,b)=>b>0?Math.min(100,Math.round(a/b*100)):0;
+  const rows=S.open?ledgerRows().slice(-6).reverse():[];
+  const n=[...S.notices].sort((a,b)=>a.date<b.date?1:-1)[0];
+  return `
+  <section class="sheet">
+    <div class="fig main"><div class="k">${t('total_sav')}</div><div class="v">${money(G.dep)}</div><div class="n">${t('n_members',fmt(nAct),fmt(G.shares))}</div></div>
+    <div class="fig"><div class="k">${t('on_loan')}</div><div class="v">${money(G.out)}</div><div class="n">${t('n_loans',fmt(openL))}</div></div>
+    <div class="fig"><div class="k">${t('int_earned')}</div><div class="v">${money(G.repI)}</div><div class="n">${G.fees?t('fees_note',money(G.fees)):t('from_loans')}</div></div>
+    <div class="fig"><div class="k">${t('cash')}</div><div class="v">${money(G.cash)}</div><div class="n">${t('should_match')}</div></div>
+  </section>
+  <section class="panel">
+    <div class="bar" style="margin-bottom:12px"><h3 style="margin:0">${t('year')}</h3><span class="chip">${phase}</span></div>
+    <div class="track">${perM.map((a,i)=>`<div class="col ${i>5?'p2':''} ${a?'':'zero'}"><span class="amt">${a?kf(a):''}</span><div class="barv" style="height:${a?Math.max(6,a/mx*78):2}%"></div></div>`).join('')}</div>
+    <div class="tlabels">${ms.map(ym=>`<span class="${ym===nowYm?'now':''}">${fmonth(ym)}</span>`).join('')}</div>
+    <div class="phases"><span>${t('phase1')}</span><span>${t('phase2')}</span></div>
+  </section>
+  <div class="two">
+    <section class="panel"><h3>${t('split')}</h3><div class="meter">
+      <div class="row"><div class="lab"><span>${t('inv')} · ${fmt(c.allocInvest)}%</span><b>${money(G.capital*c.allocInvest/100)}</b></div><div class="rail"><i style="width:${num(c.allocInvest)}%"></i></div><span class="sub">${t('kept',money(G.capital*c.allocInvest/100))}</span></div>
+      <div class="row"><div class="lab"><span>${t('loanpool')} · ${fmt(c.allocLoan)}%</span><b>${money(pool)}</b></div><div class="rail"><i class="b" style="width:${pct(G.out,pool)}%"></i></div><span class="sub">${t('lent_of',money(G.out),money(pool))}</span></div>
+      <div class="row"><div class="lab"><span>${t('reserve')} · ${fmt(c.allocReserve)}%</span><b>${money(G.capital*c.allocReserve/100)}</b></div><div class="rail"><i class="g" style="width:${num(c.allocReserve)}%"></i></div><span class="sub">${t('kept',money(G.capital*c.allocReserve/100))}</span></div>
+    </div></section>
+    <section class="panel"><div class="bar" style="margin-bottom:6px"><h3 style="margin:0">${t('this_month')} · ${fmonth(nowYm,true)}</h3>${idx>=0?`<span class="chip ${nPaid>=nAct?'good':'warn'}">${t('paid_n',fmt(nPaid),fmt(nAct))}</span>`:''}</div>
+      ${idx<0?`<p class="sub">${phase}</p>`:!S.open?`<p class="sub">${t('only_count')}</p>`:`<div class="list">${act.map(m=>{const d=S.deposits.find(x=>x.memberId===m.id&&x.month===nowYm);return `<div class="li"><div>${esc(m.name)}</div>${d?`<span class="chip good">${t('paid')} · ${fmt(d.shares)}</span>`:`<span class="chip warn">${t('due')}</span>`}</div>`}).join('')}</div>`}
+    </section>
+  </div>
+  <div class="two">
+    ${S.open?`<section class="panel"><div class="bar" style="margin-bottom:6px"><h3 style="margin:0">${t('recent')}</h3><button class="link" data-act="tab" data-id="ledger">${t('see_all')}</button></div>
+      ${rows.length?`<div class="list">${rows.map(x=>`<div class="li"><div>${typeName(x.type)}<small>${fdate(x.date)} · ${esc(x.desc)}</small></div><b class="num ${x.in?'in':'out'}">${x.in?'+':'−'} ${fmt(x.in||x.out)}</b></div>`).join('')}</div>`:`<p class="sub">${t('none_yet')}</p>`}
+    </section>`:''}
+    <section class="panel"><div class="bar" style="margin-bottom:6px"><h3 style="margin:0">${t('latest_notice')}</h3><button class="link" data-act="tab" data-id="notices">${t('see_all')}</button></div>
+      ${n?`<div class="notice"><h3>${esc(n.title)}</h3><p class="sub">${fdate(n.date)}</p><p>${esc(n.body)}</p>${pics(n)}</div>`:`<p class="sub">${t('none_yet')}</p>`}
+    </section>
+  </div>`;
+}
+function missed(m){
+  if(m.status==='left')return 0; const nowYm=today().slice(0,7); let n=0;
+  for(const ym of months().filter(y=>y<nowYm&&(!m.joined||m.joined.slice(0,7)<=y)).reverse()){if(S.deposits.some(d=>d.memberId===m.id&&d.month===ym))break;n++}
+  return n;
+}
+function vMe(){
+  const m=C.mBy[S.me];
+  if(!m)return emptyBox();
+  const nowYm=today().slice(0,7), ls=C.loans.filter(l=>l.memberId===m.id), fees=S.deposits.filter(d=>d.memberId===m.id).reduce((a,d)=>a+num(d.fee),0);
+  return `<div><div class="bar"><h2>${esc(m.name)}</h2><button class="btn ghost sm" data-act="chg-pass">${t('chg_pass')}</button></div><p class="sub"><b>${t('serial')}: ${sn(m)}</b> · ${m.loginId?t('login_id')+': '+esc(m.loginId)+' · ':''}${roleName(m.role)}${m.joined?' · '+t('joined')+' '+fdate(m.joined):''}${missed(m)>=3?` <span class="chip bad">${t('missed',fmt(missed(m)))}</span>`:''}</p><p class="sub">${t('nominee')}: ${nomineeTxt(m)}</p></div>
+  <section class="sheet">
+    <div class="fig main"><div class="k">${t('saved')}</div><div class="v">${money(C.sav[m.id]||0)}</div><div class="n">${fmt(C.shr[m.id]||0)} ${t('shares')}</div></div>
+    <div class="fig"><div class="k">${t('loan_out')}</div><div class="v">${money(C.owe[m.id]||0)}</div><div class="n">${t('n_loans',fmt(ls.filter(l=>l.status!=='closed').length))}</div></div>
+    <div class="fig"><div class="k">${t('loan_limit')}</div><div class="v">${money(C.limit(m.id))}</div><div class="n">${fmt(C.c.loanLimitPct)}%</div></div>
+    <div class="fig"><div class="k">${t('late_fee')}</div><div class="v">${money(fees)}</div><div class="n">${t('late_hint',fmt(C.c.dueDay),fmt(C.c.graceDays),money(C.c.lateFee))}</div></div>
+  </section>
+  <div class="two">
+    <section class="panel"><h3>${t('me_months')}</h3><div class="list">${months().map((ym,i)=>{const d=S.deposits.find(x=>x.memberId===m.id&&x.month===ym), due=!d&&ym<=nowYm&&(!m.joined||m.joined.slice(0,7)<=ym);
+      return `<div class="li"><div>${fmt(i+1)}. ${fmonth(ym,true)}${d?`<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${num(d.fee)>0?' · '+t('late_fee')+' '+money(d.fee):''}${proofBtns(d)}</small>`:''}</div>${d?`<b class="num">${money(d.amount)}</b>`:`<span class="chip ${due?'warn':''}">${due?t('due'):t('later')}</span>`}</div>`}).join('')}</div></section>
+    <section class="panel"><h3>${t('me_loans')}</h3>${ls.length?`<div class="list">${ls.map(l=>`<div class="li"><div><button class="link" data-act="view-loan" data-id="${l.id}">${fdate(l.issued)}</button> ${statusChip(l.status)}<small>${t('due_date')}: ${fdate(l.dueOn)} · ${t('outstanding')}: ${money(l.out)}</small></div><b class="num">${money(l.principal)}</b></div>`).join('')}</div>`:`<p class="sub">${t('none_yet')}</p>`}</section>
+  </div>`;
+}
+function vMembers(){
+  if(!S.members.length)return emptyBox();
+  const ms=[...S.members].sort((a,b)=>(a.status==='left')-(b.status==='left')||bySerial(a,b));
+  const pend=S.admin&&S.pending.length?`<section class="panel"><h3>${t('waiting')}</h3><div class="list">${S.pending.map(m=>`<div class="li"><div>${esc(m.name)}<small>${t('login_id')}: ${esc(m.loginId)}${m.phone?' · '+esc(m.phone):''} · ${t('asked_on')} ${fdate(m.joined)}</small></div><span style="white-space:nowrap"><button class="btn sm" data-act="approve" data-id="${m.id}">${t('approve')}</button> <button class="btn danger sm" data-act="reject" data-id="${m.id}">${t('reject')}</button></span></div>`).join('')}</div></section>`:'';
+  return head(t('members'),`<button class="btn" data-act="add-member">${t('add_member')}</button>`)+pend+
+  `<div class="scroll"><table><thead><tr><th>${t('serial')}</th><th>${t('name')}</th><th>${t('role')}</th><th class="num">${t('shares')}</th><th class="num">${t('saved')}</th><th class="num">${t('loan_out')}</th><th class="num">${t('loan_limit')}</th><th></th></tr></thead><tbody>
+  ${ms.map(m=>`<tr><td class="num" style="text-align:left"><b>${sn(m)}</b></td><td><button class="link" data-act="view-member" data-id="${m.id}">${esc(m.name)}</button>${m.status==='left'?` <span class="chip">${t('left')}</span>`:''}${missed(m)>=3?` <span class="chip bad">${t('missed',fmt(missed(m)))}</span>`:''}${S.admin?`<small class="sub" style="display:block">${m.loginId&&m.hasPass?t('login_id')+': '+esc(m.loginId):t('no_login')}${m.admin?' · '+t('admin'):''}</small>`:''}${m.phone?`<small class="sub" style="display:block">${esc(m.phone)}</small>`:''}</td><td>${roleName(m.role)}</td><td class="num">${fmt(C.shr[m.id]||0)}</td><td class="num">${money(C.sav[m.id]||0)}</td><td class="num">${money(C.owe[m.id]||0)}</td><td class="num">${money(C.limit(m.id))}</td><td>${S.admin?`<button class="btn ghost sm" data-act="edit-member" data-id="${m.id}">${t('edit')}</button>`:''}</td></tr>`).join('')}
+  </tbody><tfoot><tr><td colspan="3">${t('total')}</td><td class="num">${fmt(C.shares)}</td><td class="num">${money(C.dep)}</td><td class="num">${money(C.out)}</td><td></td><td></td></tr></tfoot></table></div>`;
+}
+function vSavings(){
+  if(!S.members.length)return emptyBox();
+  const ms=months(), nowYm=today().slice(0,7);
+  const list=S.members.filter(m=>m.status!=='left'||C.sav[m.id]).sort(bySerial);
+  const dBy={}; S.deposits.forEach(d=>dBy[d.memberId+'|'+d.month]=d);
+  const cell=(m,ym)=>{const d=dBy[m.id+'|'+ym], due=!d&&ym<=nowYm&&m.status!=='left'&&(!m.joined||m.joined.slice(0,7)<=ym);
+    const cls='cell'+(d?' paid':due?' due':''), txt=d?fmt(d.shares)+(num(d.fee)>0?'*':''):due?t('due'):(S.admin?'+':'');
+    return S.admin?`<button class="${cls}" data-act="dep" data-m="${m.id}" data-ym="${ym}" aria-label="${esc(m.name)} ${fmonth(ym,true)}">${txt}</button>`:`<span class="${cls}">${txt}</span>`};
+  return head(t('savings'),`<button class="btn" data-act="add-dep">${t('rec_pay')}</button>`,t('grid_hint',money(C.c.shareValue))+' '+t('star')+'. '+t('late_hint',fmt(C.c.dueDay),fmt(C.c.graceDays),money(C.c.lateFee))+(S.admin?' '+t('grid_admin'):''))+
+  `<div class="scroll"><table class="grid"><thead><tr><th>${t('r_member')}</th>${ms.map((ym,i)=>`<th class="${ym===nowYm?'now':''}">${fmonth(ym)}<br>${fmt(i+1)}</th>`).join('')}<th class="num">${t('total')}</th></tr></thead><tbody>
+  ${list.map(m=>`<tr><td><small class="sub">${sn(m)}</small> ${esc(m.name)}</td>${ms.map(ym=>`<td>${cell(m,ym)}</td>`).join('')}<td class="num"><b>${money(C.sav[m.id]||0)}</b></td></tr>`).join('')}
+  </tbody><tfoot><tr><td>${t('total')}</td>${ms.map(ym=>{const a=S.deposits.filter(d=>d.month===ym).reduce((x,d)=>x+num(d.amount),0);return `<td class="num" style="text-align:center">${a?kf(a):''}</td>`}).join('')}<td class="num">${money(C.dep)}</td></tr></tfoot></table></div>`;
+}
+const pics=n=>(n.images||[]).length?`<div class="pics">${n.images.map(id=>`<button class="pic" data-act="view-img" data-id="${id}"><img src="/img/${id}.jpg" alt="" loading="lazy"></button>`).join('')}</div>`:'';
+const proofBtns=d=>(d.proof||[]).map(id=>` <button class="link" data-act="view-img" data-id="${id}">📎 ${t('see_proof')}</button>`).join('');
+const nomineeTxt=m=>m.nomineeName?esc(m.nomineeName)+(m.nomineeRelation?' ('+esc(m.nomineeRelation)+')':'')+(m.nomineePhone?' · '+esc(m.nomineePhone):''):t('no_nominee');
+const statusChip=s=>`<span class="chip ${s==='closed'?'good':s==='overdue'?'bad':'warn'}">${t('s_'+s)}</span>`;
+function vLoans(){
+  const ls=[...C.loans].sort((a,b)=>(a.status==='closed')-(b.status==='closed')||(a.issued<b.issued?1:-1));
+  const h=head(t('loans'),S.members.length?`<button class="btn" data-act="add-loan">${t('new_loan')}</button>`:'',t('live_pool',money(C.poolLeft),money(C.cash)));
+  if(!ls.length)return h+`<div class="empty"><p>${t('no_loans')}</p></div>`;
+  return h+`<div class="scroll"><table><thead><tr><th>${t('borrower')}</th><th>${t('status')}</th><th class="num">${t('principal')}</th><th class="num">${t('rate_s')}</th><th>${t('issued')}</th><th>${t('due_date')}</th><th class="num">${t('repaid')}</th><th class="num">${t('outstanding')}</th><th></th></tr></thead><tbody>
+  ${ls.map(l=>`<tr><td><button class="link" data-act="view-loan" data-id="${l.id}">${esc(C.nm(l.memberId))}</button>${l.purpose?`<small class="sub" style="display:block">${esc(l.purpose)}</small>`:''}</td><td>${statusChip(l.status)}</td><td class="num">${money(l.principal)}</td><td class="num">${fmt(l.rate)}%</td><td>${fdate(l.issued)}</td><td>${fdate(l.dueOn)}</td><td class="num">${money(l.repaid)}</td><td class="num"><b>${money(l.out)}</b></td><td style="white-space:nowrap">${S.admin?`${l.status!=='closed'?`<button class="btn sm" data-act="repay" data-id="${l.id}">${t('repay')}</button> `:''}<button class="btn ghost sm" data-act="edit-loan" data-id="${l.id}">${t('edit')}</button>`:''}</td></tr>`).join('')}
+  </tbody><tfoot><tr><td colspan="2">${t('total')}</td><td class="num">${money(C.lent)}</td><td colspan="3"></td><td class="num">${money(C.lent-C.out)}</td><td class="num">${money(C.out)}</td><td></td></tr></tfoot></table></div>`;
+}
+function vLedger(){
+  const all=ledgerRows(), rows=all.filter(x=>S.filter==='all'||x.type===S.filter).reverse();
+  const opts=['all','dep','fee','loan','rep','income','expense'].map(k=>`<option value="${k}" ${k===S.filter?'selected':''}>${k==='all'?t('all'):typeName(k)}</option>`).join('');
+  return `<div class="bar"><h2>${t('ledger')}</h2><div class="tools"><select id="ledger-filter" class="btn ghost" aria-label="${t('kind')}">${opts}</select>${S.admin?`<button class="btn" data-act="add-entry">${t('add_entry')}</button>`:''}</div></div>`+
+  (rows.length?`<div class="scroll"><table><thead><tr><th>${t('date')}</th><th>${t('kind')}</th><th>${t('desc')}</th><th class="num">${t('money_in')}</th><th class="num">${t('money_out')}</th><th class="num">${t('balance')}</th><th></th></tr></thead><tbody>
+  ${rows.map(x=>`<tr><td style="white-space:nowrap">${fdate(x.date)}</td><td style="white-space:nowrap">${typeName(x.type)}</td><td>${esc(x.desc)}</td><td class="num in">${x.in?fmt(x.in):''}</td><td class="num out">${x.out?fmt(x.out):''}</td><td class="num">${fmt(x.bal)}</td><td>${S.admin&&x.id?`<button class="btn ghost sm" data-act="edit-entry" data-id="${x.id}">${t('edit')}</button>`:''}</td></tr>`).join('')}
+  </tbody><tfoot><tr><td colspan="3">${t('cash')}</td><td colspan="3" class="num">${money(C.cash)}</td><td></td></tr></tfoot></table></div>`:`<div class="empty"><p>${t('no_ledger')}</p></div>`);
+}
+function vNotices(){
+  const ns=[...S.notices].sort((a,b)=>a.date<b.date?1:-1);
+  return head(t('notices'),`<button class="btn" data-act="add-notice">${t('add_notice')}</button>`)+
+  (ns.length?`<section class="panel">${ns.map(n=>`<article class="notice"><div class="bar"><h3>${esc(n.title)}</h3>${S.admin?`<button class="btn ghost sm" data-act="edit-notice" data-id="${n.id}">${t('edit')}</button>`:''}</div><p class="sub">${fdate(n.date)}</p><p>${esc(n.body)}</p>${pics(n)}</article>`).join('')}</section>`:`<div class="empty"><p>${t('no_notices')}</p></div>`);
+}
+function vPlan(){
+  const c=C.c, ul=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  const P=(h,a)=>`<section class="panel"><h3>${h}</h3>${ul(a)}</section>`;
+  return `<div class="bar"><h2>${t('plan')}</h2></div><div class="rules">`+
+   P(t('ru_share'),[t('ru_s1',money(c.shareValue)),t('ru_s2',fmt(c.minShares),fmt(c.maxShares),money(c.minShares*c.shareValue),money(c.maxShares*c.shareValue),fmt(c.dueDay)),t('ru_s4',fmt(c.graceDays),money(c.lateFee)),t('ru_s5'),t('ru_s3')])+
+   P(t('ru_loan'),[t('ru_l1',fmt(c.loanLimitPct)),t('ru_l2',fmt(c.loanRate)),t('ru_l3',fmt(c.loanTermMax))])+
+   P(t('ru_fund'),[t('inv')+' · '+fmt(c.allocInvest)+'%',t('loanpool')+' · '+fmt(c.allocLoan)+'%',t('reserve')+' · '+fmt(c.allocReserve)+'%'])+
+   P(t('ru_road'),[t('ru_r1'),t('ru_r2'),t('ru_r3')])+
+   P(t('ru_mou'),[t('ru_m1'),t('ru_s3'),t('ru_m5'),t('ru_m3'),t('ru_m2'),t('ru_m4')])+
+   (c.email?`<section class="panel"><h3>${t('contact')}</h3><p>${t('email')}: <b>${esc(c.email)}</b></p></section>`:'')+
+   P(t('ru_trust'),[t('ru_t1')+(c.bank?' ('+esc(c.bank)+')':''),t('ru_t2'),t('ru_t3')])+`</div>`;
+}
+function vHistory(){
+  const cn={members:'members',deposits:'savings',loans:'loans',repayments:'l_rep',entries:'ledger',notices:'notices',cfg:'settings'};
+  const when=x=>new Intl.DateTimeFormat(loc(),{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(x));
+  return `<div><div class="bar"><h2>${t('history')}</h2></div><p class="sub">${t('h_hint')}</p></div>`+
+  (S.log.length?`<div class="scroll"><table><thead><tr><th>${t('h_when')}</th><th>${t('h_who')}</th><th>${t('h_what')}</th><th>${t('desc')}</th></tr></thead><tbody>
+  ${S.log.map(x=>`<tr><td style="white-space:nowrap">${when(x.t)}</td><td>${esc(x.by)}</td><td><span class="chip ${x.act==='delete'?'bad':x.act==='edit'?'warn':'good'}">${t('h_'+x.act)}</span> ${t(cn[x.col]||'settings')}${x.label?'<br><b>'+esc(x.label)+'</b>':''}</td><td class="sub" style="overflow-wrap:anywhere;min-width:200px">${esc(x.detail)}</td></tr>`).join('')}
+  </tbody></table></div>`:`<div class="empty"><p>${t('h_none')}</p></div>`);
+}
+function vSettings(){
+  const c=C.c, row=(k,v)=>`<dt>${k}</dt><dd>${v||'—'}</dd>`;
+  return head(t('settings'),`<button class="btn" data-act="edit-settings">${t('edit_settings')}</button>`,t('settings_hint'))+
+  `<section class="panel"><dl class="kv" style="margin:0">${row(t('co_name'),esc(c.name))+row(t('share_value'),money(c.shareValue))+row(t('min_sh'),fmt(c.minShares))+row(t('max_sh'),fmt(c.maxShares))+row(t('due_day'),fmt(c.dueDay))+row(t('grace'),fmt(c.graceDays))+row(t('fee_amt'),money(c.lateFee))+row(t('start_m'),fmonth(c.startMonth,true))+row(t('rate'),fmt(c.loanRate)+'%')+row(t('limit_pct'),fmt(c.loanLimitPct)+'%')+row(t('term_max'),fmt(c.loanTermMax))+row(t('a_inv'),fmt(c.allocInvest)+'%')+row(t('a_loan'),fmt(c.allocLoan)+'%')+row(t('a_res'),fmt(c.allocReserve)+'%')+row(t('bank'),esc(c.bank))+row(t('chair'),esc(c.chair))+row(t('treasurer'),esc(c.treasurer))+row(t('email'),esc(c.email))+row(t('open_ledger'),c.openLedger==='yes'?t('yes'):t('no'))}</dl></section>`;
+}
+
+/* ---------- dialog ---------- */
+const dlg=$('#dlg'); let F=null;
+function openInfo(title,html){F=null;dlg.innerHTML=`<div class="dlg-in"><h2>${esc(title)}</h2>${html}<div class="dlg-foot"><button class="btn ghost" data-act="close">${t('close')}</button></div></div>`;if(!dlg.open)dlg.showModal()}
+function openForm(o){
+  const imf=o.fields.find(f=>f.type==='images')||{}; F=o; F.imgs=(imf.value||[]).slice(); F.imgMax=imf.max||4;
+  const fld=f=>{const id='f-'+f.id, v=f.value??'';
+    let c;
+    if(f.type==='fixed')c=`<div class="fixed">${esc(f.text)}</div>`;
+    else if(f.type==='select')c=`<select id="${id}">${f.options.map(p=>`<option value="${esc(p.v)}" ${String(p.v)===String(v)?'selected':''}>${esc(p.l)}</option>`).join('')}</select>`;
+    else if(f.type==='textarea')c=`<textarea id="${id}">${esc(v)}</textarea>`;
+    else if(f.type==='images')c=`<div class="thumbs" id="f-imgs"></div><input type="file" id="f-imgfile" accept="image/*" multiple>`;
+    else c=`<input id="${id}" type="${f.type||'text'}" value="${esc(v)}" ${f.type==='number'?`inputmode="decimal" step="any" min="0"`:''} ${f.ph?`placeholder="${esc(f.ph)}"`:''}>`;
+    return `<div class="fld"><label for="${id}">${esc(f.label)}</label>${c}</div>`};
+  dlg.innerHTML=`<form class="dlg-in" id="dlg-form" novalidate><h2>${esc(o.title)}</h2>${o.fields.map(fld).join('')}${o.live?'<div class="live" id="dlg-live"></div>':''}<div class="err" id="dlg-err" hidden></div>
+   <div class="dlg-foot">${o.del?`<button type="button" class="btn danger" data-act="form-del">${t('del')}</button>`:''}<span class="sp"></span><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button><button class="btn" id="dlg-save">${t('save')}</button></div></form>`;
+  if(!dlg.open)dlg.showModal(); drawThumbs(); liveUpdate();
+}
+function drawThumbs(){const box=$('#f-imgs');if(!box)return;box.innerHTML=F.imgs.map(id=>`<span class="thumb"><img src="/img/${id}.jpg" alt=""><button type="button" data-act="rm-img" data-id="${id}" aria-label="${t('del')}">×</button></span>`).join('');$('#f-imgfile').hidden=F.imgs.length>=F.imgMax}
+function shrink(file){return new Promise((ok,no)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',0.82))};im.onerror=()=>{URL.revokeObjectURL(u);no({msg:'bad_image'})};im.src=u})}
+dlg.addEventListener('change',async ev=>{if(ev.target.id!=='f-imgfile'||!F)return;const files=[...ev.target.files].slice(0,F.imgMax-F.imgs.length);ev.target.value='';
+  for(const f of files){toast(t('uploading'));try{const r=await api('upload',{data:await shrink(f)});F.imgs.push(r.id);drawThumbs()}catch(e){fail(errText(e))}}});
+function vals(){const v={};F.fields.forEach(f=>{if(f.type==='fixed')return;if(f.type==='images'){v[f.id]=F.imgs.slice();return}const e=document.getElementById('f-'+f.id);v[f.id]=f.type==='number'?(e.value===''?null:num(e.value)):e.value.trim()});return v}
+function liveUpdate(){if(F&&F.live){const e=$('#dlg-live');if(e)e.innerHTML=F.live(vals())}}
+function fail(m){const e=$('#dlg-err');if(e){e.textContent=m;e.hidden=false}}
+async function run(p,okMsg){
+  const b=$('#dlg-save'); if(b){b.disabled=true;b.textContent=t('saving')}
+  try{await p();dlg.close();toast(okMsg||t('saved_ok'))}
+  catch(e){if(b){b.disabled=false;b.textContent=t('save')}fail(errText(e))}
+}
+dlg.addEventListener('input',liveUpdate);
+dlg.addEventListener('submit',ev=>{ev.preventDefault();if(!F)return;const v=vals();
+  const miss=F.fields.filter(f=>f.req&&(v[f.id]===null||v[f.id]===''||(f.type==='number'&&!(v[f.id]>0)&&!f.zero))).map(f=>f.label);
+  if(miss.length)return fail(t('e_need',miss.join(', ')));
+  const err=F.check&&F.check(v); if(err)return fail(err);
+  run(()=>F.save(v));
+});
+let toastT; function toast(m){const e=$('#toast');e.textContent=m;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2200)}
+
+/* ---------- forms ---------- */
+const api=async(p,b)=>{const r=await fetch('/api/'+p,b?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:{cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok)throw {status:r.status,msg:j.error||'',email:j.email};return j};
+const errText=e=>e&&e.msg&&T['x_'+e.msg]?t('x_'+e.msg):t('e_save');
+let lastJson='';
+async function load(){
+  try{const d=await api('state'), j=JSON.stringify(d); if(j===lastJson&&S.state!=='loading'&&S.state!=='login')return; lastJson=j;
+    Object.assign(S,{cfg:d.cfg,members:d.members.filter(m=>m.status!=='pending'),pending:d.members.filter(m=>m.status==='pending'),note:'',deposits:d.deposits,loans:d.loans,repays:d.repayments,entries:d.entries,notices:d.notices,admin:d.admin,open:d.open,me:d.me,G:d.totals,log:d.log||[],state:d.mustChange?'setpass':'ready'})}
+  catch(e){if(e.status===401){S.state='login';lastJson='';if(e.email)S.pubEmail=e.email}else if(S.state==='loading')S.state='nodb'}
+  render();
+}
+const db={collection:n=>({doc:id=>({set:d=>api('save',{col:n,id:id||'',data:d}).then(load),delete:()=>api('delete',{col:n,id}).then(load)})}),doc:()=>({set:d=>api('save',{col:'cfg',data:d}).then(load)})};
+function fPassword(){
+  openForm({title:t('chg_pass'),fields:[{id:'current',label:t('cur_pass'),type:'password',req:1},{id:'next',label:t('new_pass'),type:'password',req:1},{id:'rep',label:t('rep_pass'),type:'password',req:1}],
+   check:v=>v.next!==v.rep?t('e_match'):'',save:v=>api('password',{current:v.current,next:v.next})});
+}
+document.addEventListener('submit',async ev=>{
+  if(ev.target.id!=='auth-form')return; ev.preventDefault();
+  const g=id=>(document.getElementById(id)||{}).value||'', err=$('#auth-err'), btn=ev.target.querySelector('button'); err.hidden=true;
+  try{ if(S.state==='setpass'){ if(g('a-new')!==g('a-rep'))throw {msg:'',text:t('e_match')}; btn.disabled=true; await api('password',{current:g('a-cur'),next:g('a-new')}) }
+       else if(S.state==='signup'){ if(g('a-new')!==g('a-rep'))throw {msg:'',text:t('e_match2')}; btn.disabled=true; await api('signup',{name:g('a-name').trim(),phone:g('a-phone').trim(),loginId:g('a-id').trim(),password:g('a-new')}); S.note=t('su_done'); S.state='login'; render(); return }
+       else { btn.disabled=true; await api('login',{loginId:g('a-id').trim(),password:g('a-pw')}) }
+       await load(); }
+  catch(e){btn.disabled=false;err.textContent=e.text||errText(e);err.hidden=false}
+});
+const col=n=>db.collection(n);
+const put=(n,id,data)=>(id?col(n).doc(id):col(n).doc()).set(data);
+const memberOpts=()=>S.members.filter(m=>m.status!=='left').sort((a,b)=>String(a.name).localeCompare(b.name)).map(m=>({v:m.id,l:m.name}));
+function fMember(id){
+  const m=id?S.members.find(x=>x.id===id):null, used=id&&(S.deposits.some(d=>d.memberId===id)||S.loans.some(l=>l.memberId===id));
+  openForm({title:m?t('edit_member'):t('add_member'),fields:[
+    {id:'name',label:t('name'),value:m?.name,req:1},{id:'phone',label:t('phone'),value:m?.phone,type:'tel'},{id:'address',label:t('address'),value:m?.address},
+    {id:'nomineeName',label:t('nominee_name'),value:m?.nomineeName},{id:'nomineeRelation',label:t('nominee_rel'),value:m?.nomineeRelation},{id:'nomineePhone',label:t('nominee_phone'),value:m?.nomineePhone,type:'tel'},
+    {id:'role',label:t('role'),type:'select',value:m?.role||'member',options:['member','chair','treasurer','secretary'].map(r=>({v:r,l:roleName(r)}))},
+    {id:'joined',label:t('joined'),type:'date',value:m?.joined||today()},
+    {id:'status',label:t('status'),type:'select',value:m?.status||'active',options:[{v:'active',l:t('active')},{v:'left',l:t('left')}]},
+    {id:'note',label:t('note'),value:m?.note},
+    {id:'loginId',label:t('login_id'),value:m?.loginId},{id:'password',label:t('set_pass'),value:''},
+    {id:'admin',label:t('is_admin'),type:'select',value:m?.admin?'yes':'no',options:[{v:'no',l:t('no')},{v:'yes',l:t('yes')}]}],
+   save:v=>put('members',id,v),
+   del:m?()=>used?Promise.reject({soft:t('has_records')}):col('members').doc(id).delete():null});
+}
+function fDeposit(mid,ym){
+  const c=cfg(), ex=mid&&ym?S.deposits.find(d=>d.memberId===mid&&d.month===ym):null, fixed=!!(mid&&ym);
+  const ms=months();
+  openForm({title:t('rec_pay'),fields:[
+    fixed?{id:'m',type:'fixed',label:t('r_member'),text:C.nm(mid)}:{id:'memberId',label:t('r_member'),type:'select',options:memberOpts(),value:mid},
+    fixed?{id:'y',type:'fixed',label:t('month'),text:fmonth(ym,true)}:{id:'month',label:t('month'),type:'select',options:ms.map(x=>({v:x,l:fmonth(x,true)})),value:ms.includes(today().slice(0,7))?today().slice(0,7):ms[0]},
+    {id:'shares',label:t('n_shares'),type:'number',value:ex?.shares??c.minShares,req:1},
+    {id:'date',label:t('paid_on'),type:'date',value:ex?.date||today(),req:1},{id:'fee',label:t('late_fee'),type:'number',value:ex?.fee??0},{id:'note',label:t('note'),value:ex?.note},
+    {id:'proof',label:t('proof'),type:'images',value:ex?.proof||[],max:2}],
+   live:v=>`${t('amount')}: <b>${money(num(v.shares)*c.shareValue)}</b><br>${t('late_hint',fmt(c.dueDay),fmt(c.graceDays),money(c.lateFee))}`,
+   check:v=>(v.shares<c.minShares||v.shares>c.maxShares||v.shares%1)?t('share_range',fmt(c.minShares),fmt(c.maxShares)):'',
+   save:v=>{const M=mid&&fixed?mid:v.memberId, Y=fixed?ym:v.month;return put('deposits',M+'_'+Y,{memberId:M,month:Y,shares:v.shares,amount:v.shares*c.shareValue,fee:num(v.fee),date:v.date,note:v.note,proof:v.proof})},
+   del:ex?()=>col('deposits').doc(ex.id).delete():null});
+}
+function fLoan(id){
+  const c=cfg(), l=id?C.loans.find(x=>x.id===id):null, opts=memberOpts();
+  if(l&&!opts.some(o=>o.v===l.memberId))opts.push({v:l.memberId,l:C.nm(l.memberId)});
+  const room=mid=>C.limit(mid)+(l&&l.memberId===mid?l.out:0);
+  openForm({title:l?t('edit_loan'):t('new_loan'),fields:[
+    {id:'memberId',label:t('borrower'),type:'select',options:opts,value:l?.memberId},
+    {id:'principal',label:t('principal'),type:'number',value:l?.principal,req:1},
+    {id:'rate',label:t('rate'),type:'number',value:l?.rate??c.loanRate,req:1,zero:1},
+    {id:'issued',label:t('issued'),type:'date',value:l?.issued||today(),req:1},
+    {id:'term',label:t('term'),type:'number',value:l?.term??6,req:1},
+    {id:'purpose',label:t('purpose'),value:l?.purpose}],
+   live:v=>{const s=C.sav[v.memberId]||0;return t('live_limit',money(s),money(s*c.loanLimitPct/100),money((C.owe[v.memberId]||0)-(l&&l.memberId===v.memberId?l.out:0)),`<b>${money(room(v.memberId))}</b>`)+'<br>'+t('live_pool',money(C.poolLeft),money(C.cash))},
+   check:v=>{const extra=v.principal-(l?num(l.principal):0);
+     if(v.principal-(l?l.repaid:0)>room(v.memberId))return t('e_limit',money(room(v.memberId)));
+     if(extra>C.cash)return t('e_cash',money(C.cash));
+     if(v.term>c.loanTermMax||v.term%1)return t('e_term',fmt(c.loanTermMax));return ''},
+   save:v=>put('loans',id,v),
+   del:l?async()=>{for(const r of S.repays.filter(r=>r.loanId===id))await col('repayments').doc(r.id).delete();await col('loans').doc(id).delete()}:null});
+}
+function fRepay(loanId,rid){
+  const l=C.loans.find(x=>x.id===loanId); if(!l)return;
+  const r=rid?S.repays.find(x=>x.id===rid):null, owed=l.out+(r?num(r.principal):0);
+  openForm({title:t('repay'),fields:[
+    {id:'b',type:'fixed',label:t('borrower'),text:C.nm(l.memberId)},
+    {id:'date',label:t('date'),type:'date',value:r?.date||today(),req:1},
+    {id:'principal',label:t('pay_principal'),type:'number',value:r?.principal??owed,req:1,zero:1},
+    {id:'interest',label:t('pay_interest'),type:'number',value:r?.interest??l.accrued,req:1,zero:1},
+    {id:'note',label:t('note'),value:r?.note}],
+   live:()=>t('live_repay',`<b>${money(owed)}</b>`,money(l.accrued)),
+   check:v=>v.principal>owed?t('e_over',money(owed)):'',
+   save:v=>put('repayments',rid,{loanId,...v}),
+   del:r?()=>col('repayments').doc(rid).delete():null});
+}
+function fEntry(id){
+  const e=id?S.entries.find(x=>x.id===id):null;
+  openForm({title:t('add_entry'),fields:[
+    {id:'kind',label:t('kind'),type:'select',value:e?.kind||'expense',options:[{v:'expense',l:t('expense')},{v:'income',l:t('income')}]},
+    {id:'date',label:t('date'),type:'date',value:e?.date||today(),req:1},
+    {id:'amount',label:t('amount'),type:'number',value:e?.amount,req:1},
+    {id:'category',label:t('category'),value:e?.category,req:1},{id:'note',label:t('note'),value:e?.note}],
+   save:v=>put('entries',id,v),del:e?()=>col('entries').doc(id).delete():null});
+}
+function fNotice(id){
+  const n=id?S.notices.find(x=>x.id===id):null;
+  openForm({title:n?t('edit_notice'):t('add_notice'),fields:[
+    {id:'title',label:t('title'),value:n?.title,req:1},{id:'date',label:t('date'),type:'date',value:n?.date||today(),req:1},
+    {id:'body',label:t('message'),type:'textarea',value:n?.body},
+    {id:'images',label:t('photos'),type:'images',value:n?.images||[]}],
+   check:v=>!v.body&&!v.images.length?t('e_need',t('message')):'',
+   save:v=>put('notices',id,v),del:n?()=>col('notices').doc(id).delete():null});
+}
+function fSettings(){
+  const c=cfg(), N=(id,k,z)=>({id,label:t(k),type:'number',value:c[id],req:1,zero:z});
+  openForm({title:t('edit_settings'),fields:[
+    {id:'name',label:t('co_name'),value:c.name,req:1},N('shareValue','share_value'),N('minShares','min_sh'),N('maxShares','max_sh'),N('dueDay','due_day'),N('graceDays','grace',1),N('lateFee','fee_amt',1),
+    {id:'startMonth',label:t('start_m'),value:c.startMonth,req:1,ph:'2026-11'},
+    N('loanRate','rate',1),N('loanLimitPct','limit_pct'),N('loanTermMax','term_max'),N('allocInvest','a_inv',1),N('allocLoan','a_loan',1),N('allocReserve','a_res',1),
+    {id:'bank',label:t('bank'),value:c.bank},{id:'chair',label:t('chair'),value:c.chair},{id:'treasurer',label:t('treasurer'),value:c.treasurer},{id:'email',label:t('email'),value:c.email,type:'email'},
+    {id:'openLedger',label:t('open_ledger'),type:'select',value:c.openLedger,options:[{v:'no',l:t('no')},{v:'yes',l:t('yes')}]}],
+   check:v=>!/^\d{4}-(0[1-9]|1[0-2])$/.test(v.startMonth)?t('e_month'):(v.allocInvest+v.allocLoan+v.allocReserve!==100?t('e_alloc'):(v.minShares>v.maxShares?t('share_range',fmt(v.minShares),fmt(v.maxShares)):'')),
+   save:v=>db.doc('config/main').set(v)});
+}
+function memberInfo(id){
+  const m=C.mBy[id]; if(!m)return;
+  const ds=S.deposits.filter(d=>d.memberId===id).sort((a,b)=>a.month<b.month?-1:1), ls=C.loans.filter(l=>l.memberId===id);
+  openInfo(m.name,`<dl class="kv" style="margin:0"><dt>${t('serial')}</dt><dd>${sn(m)}</dd><dt>${t('role')}</dt><dd>${roleName(m.role)}</dd><dt>${t('joined')}</dt><dd>${fdate(m.joined)||'—'}</dd>${m.address?`<dt>${t('address')}</dt><dd>${esc(m.address)}</dd>`:''}${S.admin||m.id===S.me?`<dt>${t('nominee')}</dt><dd>${nomineeTxt(m)}</dd>`:''}<dt>${t('shares')}</dt><dd>${fmt(C.shr[id]||0)}</dd><dt>${t('saved')}</dt><dd>${money(C.sav[id]||0)}</dd><dt>${t('loan_out')}</dt><dd>${money(C.owe[id]||0)}</dd><dt>${t('loan_limit')}</dt><dd>${money(C.limit(id))}</dd></dl>
+  <div><b>${t('savings')}</b><div class="list">${ds.map(d=>`<div class="li"><div>${fmonth(d.month,true)}<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${proofBtns(d)}</small></div><b class="num">${money(d.amount)}</b></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>
+  ${ls.length?`<div><b>${t('loans')}</b><div class="list">${ls.map(l=>`<div class="li"><div>${fdate(l.issued)} ${statusChip(l.status)}<small>${t('outstanding')}: ${money(l.out)}</small></div><b class="num">${money(l.principal)}</b></div>`).join('')}</div></div>`:''}`);
+}
+function loanInfo(id){
+  const l=C.loans.find(x=>x.id===id); if(!l)return;
+  const rs=S.repays.filter(r=>r.loanId===id).sort((a,b)=>a.date<b.date?-1:1);
+  openInfo(C.nm(l.memberId)+' · '+money(l.principal),`<dl class="kv" style="margin:0"><dt>${t('status')}</dt><dd>${statusChip(l.status)}</dd><dt>${t('rate_s')}</dt><dd>${fmt(l.rate)}%</dd><dt>${t('issued')}</dt><dd>${fdate(l.issued)}</dd><dt>${t('due_date')}</dt><dd>${fdate(l.dueOn)}</dd><dt>${t('repaid')}</dt><dd>${money(l.repaid)}</dd><dt>${t('outstanding')}</dt><dd>${money(l.out)}</dd>${l.purpose?`<dt>${t('purpose')}</dt><dd>${esc(l.purpose)}</dd>`:''}</dl>
+  <div><b>${t('repayments')}</b><div class="list">${rs.map(r=>`<div class="li"><div>${fdate(r.date)}<small>${t('principal')} ${fmt(r.principal)} + ${t('interest')} ${fmt(r.interest)}${r.note?' · '+esc(r.note):''}</small></div><span style="white-space:nowrap"><b class="num">${money(num(r.principal)+num(r.interest))}</b>${S.admin?` <button class="btn ghost sm" data-act="edit-repay" data-id="${r.id}" data-loan="${id}">${t('edit')}</button>`:''}</span></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>`);
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-act]'); if(!b)return;
+  const a=b.dataset.act, id=b.dataset.id;
+  if(a==='tab'){S.tab=id;try{history.replaceState(null,'','#'+id)}catch(e){}render();window.scrollTo(0,0);return}
+  if(a==='lang'){S.lang=S.lang==='ne'?'en':'ne';try{localStorage.setItem('k72-lang',S.lang)}catch(e){}render();return}
+  if(a==='close'){dlg.close();return}
+  if(a==='install'){if(installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;render()})}return}
+  if(a==='logout'){api('logout',{}).finally(()=>{lastJson='';S.state='login';S.tab='home';render()});return}
+  if(a==='chg-pass')return fPassword();
+  if(a==='view-img'){F=null;dlg.innerHTML=`<div class="dlg-in"><img class="big" src="/img/${id}.jpg" alt=""><div class="dlg-foot"><button class="btn ghost" data-act="close">${t('close')}</button></div></div>`;if(!dlg.open)dlg.showModal();return}
+  if(a==='rm-img'){if(F){F.imgs=F.imgs.filter(x=>x!==id);drawThumbs()}return}
+  if(a==='go-signup'||a==='go-login'){S.state=a==='go-signup'?'signup':'login';S.note='';render();return}
+  if(a==='view-member')return memberInfo(id);
+  if(a==='view-loan')return loanInfo(id);
+  if(!S.admin)return;
+  if(a==='approve'||a==='reject'){const m=S.pending.find(x=>x.id===id); if(!m)return;
+    if(a==='reject'&&!b.dataset.sure){b.dataset.sure=1;b.textContent=t('del_sure');return}
+    b.disabled=true; (a==='approve'?api('save',{col:'members',id,data:{...m,status:'active',admin:'no',password:''}}):api('delete',{col:'members',id})).then(load).then(()=>toast(a==='approve'?t('saved_ok'):t('deleted_ok'))).catch(e=>{b.disabled=false;toast(errText(e))});return}
+  if(a==='form-del'){ if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t('del_sure');return}
+    const d=F.del; b.disabled=true; d().then(()=>{dlg.close();toast(t('deleted_ok'))}).catch(e=>{b.disabled=false;delete b.dataset.sure;b.textContent=t('del');fail(e&&e.soft?e.soft:e&&e.msg==='has_records'?t('has_records'):errText(e))});return}
+  ({'add-member':()=>{S.tab='members';render();fMember()},'edit-member':()=>fMember(id),'dep':()=>fDeposit(b.dataset.m,b.dataset.ym),'add-dep':()=>fDeposit(),
+    'add-loan':()=>fLoan(),'edit-loan':()=>fLoan(id),'repay':()=>fRepay(id),'edit-repay':()=>fRepay(b.dataset.loan,id),
+    'add-entry':()=>fEntry(),'edit-entry':()=>fEntry(id),'add-notice':()=>fNotice(),'edit-notice':()=>fNotice(id),'edit-settings':()=>fSettings()}[a]||(()=>{}))();
+});
+document.addEventListener('change',ev=>{if(ev.target.id==='ledger-filter'){S.filter=ev.target.value;render()}});
+
+/* ---------- boot ---------- */
+try{const l=localStorage.getItem('k72-lang');if(l==='en'||l==='ne')S.lang=l}catch(e){}
+const h=location.hash.slice(1); if(TABS.includes(h))S.tab=h;
+let raf=0; const queue=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;render()})};
+let installEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;render()});
+window.addEventListener('appinstalled',()=>{installEvt=null;render()});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+render();
+load();
+setInterval(()=>{if(S.state==='ready'&&!document.hidden&&!dlg.open)load()},30000);
+</script>
+</body></html>
