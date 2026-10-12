@@ -5,9 +5,13 @@ const http = require('http'), fs = require('fs'), path = require('path'), crypto
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const FILE = path.join(DATA_DIR, 'db.json');
+const IMG_DIR = path.join(DATA_DIR, 'images');   // notice photos
+const isImg = id => /^[a-f0-9]{16}$/.test(id) && fs.existsSync(path.join(IMG_DIR, id + '.jpg'));
+const dropImg = id => { try { if (/^[a-f0-9]{16}$/.test(id)) fs.unlinkSync(path.join(IMG_DIR, id + '.jpg')); } catch (e) {} };
 const STATIC = { '/': 'index.html', '/index.html': 'index.html', '/manifest.webmanifest': 'manifest.webmanifest', '/sw.js': 'sw.js',
-  '/icon-192.png': 'icon-192.png', '/icon-512.png': 'icon-512.png', '/apple-touch-icon.png': 'apple-touch-icon.png' };
-const TYPES = { html: 'text/html; charset=utf-8', webmanifest: 'application/manifest+json', js: 'text/javascript; charset=utf-8', png: 'image/png' };
+  '/icon-192.png': 'icon-192.png', '/icon-512.png': 'icon-512.png', '/apple-touch-icon.png': 'apple-touch-icon.png',
+  '/seal.png': 'seal.png', '/logo.jpg': 'logo.jpg' };
+const TYPES = { html: 'text/html; charset=utf-8', webmanifest: 'application/manifest+json', js: 'text/javascript; charset=utf-8', png: 'image/png', jpg: 'image/jpeg' };
 // Files may sit next to server.js or in a "public" folder; next to server.js wins.
 const findFile = n => [path.join(__dirname, n), path.join(__dirname, 'public', n)].find(f => fs.existsSync(f));
 const COLS = ['members', 'deposits', 'loans', 'repayments', 'entries', 'notices'];
@@ -128,8 +132,8 @@ function stateFor(u) {
   const admin = !!u.admin, open = admin || db.cfg.openLedger === 'yes';
   const base = { me: u.id, admin, open, mustChange: !!u.mustChange, cfg: db.cfg, log: admin && !u.mustChange ? db.log.slice(-400).reverse() : [] };
   if (u.mustChange) return { ...base, members: [], deposits: [], loans: [], repayments: [], entries: [], notices: [], totals: totals() };
-  const view = m => admin ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, note: m.note, loginId: m.loginId || '', admin: !!m.admin, hasPass: !!m.pass }
-    : m.id === u.id ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, loginId: m.loginId || '' }
+  const view = m => admin ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, note: m.note, loginId: m.loginId || '', admin: !!m.admin, hasPass: !!m.pass, nomineeName: m.nomineeName || '', nomineeRelation: m.nomineeRelation || '', nomineePhone: m.nomineePhone || '' }
+    : m.id === u.id ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, loginId: m.loginId || '', nomineeName: m.nomineeName || '', nomineeRelation: m.nomineeRelation || '', nomineePhone: m.nomineePhone || '' }
     : { id: m.id, serial: m.serial || 0, name: m.name, role: m.role, joined: m.joined, status: m.status };
   const mine = x => open || x.memberId === u.id;
   const loans = rows('loans').filter(mine), seen = new Set(loans.map(l => l.id));
@@ -152,6 +156,7 @@ function save(admin, col, id, d) {
   let rec;
   if (col === 'members') {
     rec = { ...(old || { pv: 1 }), name: str(d.name), phone: str(d.phone, 40), address: str(d.address), note: str(d.note, 500),
+      nomineeName: str(d.nomineeName, 80), nomineeRelation: str(d.nomineeRelation, 40), nomineePhone: str(d.nomineePhone, 40),
       role: ['chair', 'treasurer', 'secretary'].includes(d.role) ? d.role : 'member', joined: isDate(d.joined) ? d.joined : today(), status: d.status === 'left' ? 'left' : 'active', admin: d.admin === 'yes' };
     need(rec.name);
     giveSerial(rec);   // new member, or a sign-up being approved
@@ -163,7 +168,9 @@ function save(admin, col, id, d) {
     need(db.members[d.memberId] && isMonth(d.month) && isDate(d.date));
     const sh = num(d.shares); need(Number.isInteger(sh) && sh >= db.cfg.minShares && sh <= db.cfg.maxShares);
     id = d.memberId + '_' + d.month;
-    rec = { memberId: d.memberId, month: d.month, shares: sh, amount: sh * db.cfg.shareValue, fee: num(d.fee), date: d.date, note: str(d.note, 500) };
+    const proof = (Array.isArray(d.proof) ? d.proof : []).map(String).filter(isImg).slice(0, 2);
+    rec = { memberId: d.memberId, month: d.month, shares: sh, amount: sh * db.cfg.shareValue, fee: num(d.fee), date: d.date, note: str(d.note, 500), proof };
+    if (db.deposits[id]) (db.deposits[id].proof || []).filter(x => !proof.includes(x)).forEach(dropImg);
   } else if (col === 'loans') {
     need(db.members[d.memberId] && isDate(d.issued) && num(d.principal) > 0 && num(d.term) >= 1);
     rec = { memberId: d.memberId, principal: num(d.principal), rate: num(d.rate), issued: d.issued, term: Math.round(num(d.term)), purpose: str(d.purpose, 500) };
@@ -174,8 +181,10 @@ function save(admin, col, id, d) {
     need(isDate(d.date) && num(d.amount) > 0 && str(d.category));
     rec = { kind: d.kind === 'income' ? 'income' : 'expense', date: d.date, amount: num(d.amount), category: str(d.category), note: str(d.note, 500) };
   } else {
-    need(isDate(d.date) && str(d.title) && str(d.body, 5000));
-    rec = { title: str(d.title), date: d.date, body: str(d.body, 5000) };
+    need(isDate(d.date) && str(d.title) && (str(d.body, 5000) || (d.images || []).length));
+    const imgs = (Array.isArray(d.images) ? d.images : []).map(String).filter(isImg).slice(0, 4);
+    rec = { title: str(d.title), date: d.date, body: str(d.body, 5000), images: imgs };
+    if (old) (old.images || []).filter(x => !imgs.includes(x)).forEach(dropImg);
   }
   const prev = col === 'deposits' ? db.deposits[id] : old, pw = rec._pw; delete rec._pw;
   const det = diff(prev, rec) + (pw ? (prev ? '; ' : '') + 'password: set by admin' : '');
@@ -185,6 +194,8 @@ function save(admin, col, id, d) {
 function remove(admin, col, id) {
   need(COLS.includes(col) && db[col][id]);
   if (col === 'members') { need(id !== admin.id, 'self_admin'); need(!rows('deposits').some(d => d.memberId === id) && !rows('loans').some(l => l.memberId === id), 'has_records'); }
+  if (col === 'notices') (db.notices[id].images || []).forEach(dropImg);
+  if (col === 'deposits') (db.deposits[id].proof || []).forEach(dropImg);
   if (col === 'loans') for (const r of rows('repayments')) if (r.loanId === id) delete db.repayments[r.id];
   logIt(admin.name, 'delete', col, labelOf(col, db[col][id]), diff(db[col][id], null));
   delete db[col][id];
@@ -192,14 +203,21 @@ function remove(admin, col, id) {
 
 /* ---------- http ---------- */
 function send(res, code, obj, extra) { res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...extra }); res.end(JSON.stringify(obj)); }
-function body(req) { return new Promise((ok, no) => { let s = ''; req.on('data', c => { s += c; if (s.length > 2e5) { no(new Bad('bad_input')); req.destroy(); } }); req.on('end', () => { try { ok(s ? JSON.parse(s) : {}); } catch (e) { no(new Bad('bad_input')); } }); req.on('error', no); }); }
+function body(req, max = 2e5) { return new Promise((ok, no) => { let s = ''; req.on('data', c => { s += c; if (s.length > max) { no(new Bad('bad_input')); req.destroy(); } }); req.on('end', () => { try { ok(s ? JSON.parse(s) : {}); } catch (e) { no(new Bad('bad_input')); } }); req.on('error', no); }); }
 
 async function handle(req, res) {
   const url = req.url.split('?')[0];
   if (req.method === 'GET' && STATIC[url]) {
     const f = findFile(STATIC[url]); if (!f) return send(res, 404, { error: 'not_found' });
-    res.writeHead(200, { 'Content-Type': TYPES[f.split('.').pop()], 'Cache-Control': url.endsWith('.png') ? 'max-age=86400' : 'no-cache', 'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'same-origin' });
+    res.writeHead(200, { 'Content-Type': TYPES[f.split('.').pop()], 'Cache-Control': /\.(png|jpg)$/.test(url) ? 'max-age=86400' : 'no-cache', 'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'same-origin' });
     return fs.createReadStream(f).pipe(res);
+  }
+  const im = /^\/img\/([a-f0-9]{16})\.jpg$/.exec(url);
+  if (req.method === 'GET' && im) {   // photos are for signed-in members only
+    if (!userFrom(req)) return send(res, 401, { error: 'sign_in' });
+    if (!isImg(im[1])) return send(res, 404, { error: 'not_found' });
+    res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'private, max-age=31536000', 'X-Content-Type-Options': 'nosniff' });
+    return fs.createReadStream(path.join(IMG_DIR, im[1] + '.jpg')).pipe(res);
   }
   if (!url.startsWith('/api/')) return send(res, 404, { error: 'not_found' });
   const act = url.slice(5);
@@ -211,7 +229,7 @@ async function handle(req, res) {
   const origin = req.headers.origin;   // block posts sent from other websites
   if (origin) { let h = ''; try { h = new URL(origin).host; } catch (e) {} if (h !== req.headers.host) return send(res, 403, { error: 'bad_input' }); }
   if (!/^application\/json/.test(req.headers['content-type'] || '')) return send(res, 415, { error: 'bad_input' });
-  const b = await body(req);
+  const b = await body(req, act === 'upload' ? 6e6 : 2e5);
 
   if (act === 'login') {
     const lid = str(b.loginId, 30).toLowerCase(), f = fails.get(lid);
@@ -243,6 +261,14 @@ async function handle(req, res) {
     return send(res, 200, { ok: true }, { 'Set-Cookie': cookie(req, makeToken({ ...m, id: u.id }), 2592000) });
   }
   if (!u.admin || u.mustChange) return send(res, 403, { error: 'denied' });
+  if (act === 'upload') {   // one photo, already made small (JPEG) by the browser
+    const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(b.data || ''));
+    need(m, 'bad_image'); const buf = Buffer.from(m[1], 'base64');
+    need(buf.length > 100 && buf.length <= 3e6 && buf[0] === 0xFF && buf[1] === 0xD8, 'bad_image');
+    fs.mkdirSync(IMG_DIR, { recursive: true }); const id = newId();
+    fs.writeFileSync(path.join(IMG_DIR, id + '.jpg'), buf);
+    return send(res, 200, { id });
+  }
   if (act === 'save') { save(u, b.col, str(b.id), b.data); persist(); return send(res, 200, { ok: true }); }
   if (act === 'delete') { remove(u, b.col, str(b.id)); persist(); return send(res, 200, { ok: true }); }
   send(res, 404, { error: 'not_found' });
