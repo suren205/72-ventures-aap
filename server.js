@@ -42,7 +42,7 @@ function boot() {
     db = JSON.parse(fs.readFileSync(FILE, 'utf8'));
     db.cfg = Object.assign({}, DEF_CFG, db.cfg);
     COLS.forEach(c => db[c] = db[c] || {}); db.log = db.log || [];
-    fillSerials();
+    fillSerials(); renumber();   // also closes gaps left by older deletes
     return;
   }
   db = { secret: crypto.randomBytes(32).toString('hex'), cfg: { ...DEF_CFG } };
@@ -55,7 +55,12 @@ function boot() {
   console.log('\n  First start. Sign in with:\n    Login ID: admin\n    Password: ' + pw + '\n  You will be asked to set your own password.\n');
 }
 
-/* ---------- member numbers (given once, never reused) ---------- */
+/* ---------- member numbers (no gaps: after a delete, the ones below move up) ---------- */
+function renumber() {
+  const list = Object.values(db.members).filter(m => m.serial && m.status !== 'pending').sort((a, b) => a.serial - b.serial);
+  list.forEach((m, i) => { m.serial = i + 1; });
+  db.nextSerial = list.length + 1;
+}
 function giveSerial(m) { if (!m.serial && m.status !== 'pending') { db.nextSerial = db.nextSerial || 1; m.serial = db.nextSerial++; } }
 function fillSerials() {   // older records: number them by join date
   db.nextSerial = Math.max(db.nextSerial || 1, ...Object.values(db.members).map(m => (m.serial || 0) + 1));
@@ -199,6 +204,7 @@ function remove(admin, col, id) {
   if (col === 'loans') for (const r of rows('repayments')) if (r.loanId === id) delete db.repayments[r.id];
   logIt(admin.name, 'delete', col, labelOf(col, db[col][id]), diff(db[col][id], null));
   delete db[col][id];
+  if (col === 'members') renumber();
 }
 
 /* ---------- http ---------- */
