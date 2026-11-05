@@ -230,6 +230,8 @@ const T={
  e_limit:['This is more than the member can borrow ({0}).','यो रकम सदस्यले लिन सक्ने सीमा ({0}) भन्दा बढी छ।'], e_cash:['There is not enough cash in the bank ({0}).','बैंकमा पर्याप्त मौज्दात छैन ({0})।'], e_term:['The term can be at most {0} months.','अवधि बढीमा {0} महिना हुन सक्छ।'], e_over:['This is more than the amount still owed ({0}).','यो रकम बाँकी साँवा ({0}) भन्दा बढी छ।'], e_need:['Please fill in: {0}','कृपया भर्नुहोस्: {0}'], e_alloc:['The three shares of the fund must add up to 100%.','कोषका तीन हिस्सा जोड्दा १००% हुनुपर्छ।'], e_month:['Write the start month as YYYY-MM, for example 2026-11.','सुरु महिना YYYY-MM ढाँचामा लेख्नुहोस्, जस्तै 2026-11।'], e_save:['Could not save. Check your connection and try again.','सेभ हुन सकेन। इन्टरनेट जाँचेर फेरि प्रयास गर्नुहोस्।'], e_denied:['Only the admin can change records.','एडमिनले मात्र अभिलेख परिवर्तन गर्न सक्छन्।'],
  no_loans:['No loans have been given yet.','अहिलेसम्म कुनै कर्जा दिइएको छैन।'],
  add_entry:['Other income or expense','अन्य आम्दानी वा खर्च'], kind:['Type','प्रकार'], income:['Income','आम्दानी'], expense:['Expense','खर्च'], category:['What for','शीर्षक'], date:['Date','मिति'], desc:['Details','विवरण'], money_in:['In','आम्दानी'], money_out:['Out','निकासा'], balance:['Balance','मौज्दात'], all:['All entries','सबै कारोबार'],
+ fees:['Fees','शुल्क'], fee_dup:['This fee is already recorded. Click it in the table to change it.','यो शुल्क पहिले नै लेखिएको छ। बदल्न तालिकामा त्यसमै थिच्नुहोस्।'], reg_fee:['Registration fee','दर्ता शुल्क'], renew_fee:['Renewal fee','नवीकरण शुल्क'], l_mfee:['Membership fee','सदस्यता शुल्क'], rec_fee:['Record fee','शुल्क प्रविष्टि'], fee_kind:['Fee type','शुल्कको प्रकार'], m_year:['Membership year','सदस्यता वर्ष'], yr:['Year {0}','वर्ष {0}'], yr_span:['Year {0} · {1} – {2}','वर्ष {0} · {1} – {2}'], unpaid:['Not paid','बाँकी'], fees_total:['Fees collected','जम्मा शुल्क'],
+ fees_hint:['Registration fee {0} is paid once when joining. Renewal fee {1} is paid every year from year 2. Year 1 starts {2}.','दर्ता शुल्क {0} सदस्य बन्दा एक पटक मात्र तिर्ने। नवीकरण शुल्क {1} दोस्रो वर्षदेखि हरेक वर्ष तिर्ने। पहिलो वर्ष {2} देखि सुरु हुन्छ।'],
  l_dep:['Share payment','शेयर भुक्तानी'], l_loan:['Loan given','कर्जा निकासा'], l_rep:['Loan repayment','कर्जा फिर्ता'],
  no_ledger:['No entries match.','कुनै कारोबार भेटिएन।'],
  add_notice:['Post a notice','सूचना राख्नुहोस्'], edit_notice:['Edit notice','सूचना सम्पादन'], title:['Title','शीर्षक'], message:['Message','विवरण'], no_notices:['No notices yet. Meeting dates and decisions will show here.','अहिलेसम्म सूचना छैन। बैठक मिति र निर्णयहरू यहाँ देखिनेछन्।'],
@@ -250,9 +252,9 @@ const T={
  ru_m1:['Written promise: a fixed savings date and share amount every month.','लिखित प्रतिबद्धता: मासिक बचत मिति र शेयर किस्ताको स्पष्ट मापदण्ड।'], ru_m2:['Exit: a member who leaves within the year gets back only the money they saved. No interest or profit can be claimed before the company is registered.','बहिर्गमन: १ वर्षभित्र छाड्ने सदस्यले आफूले जम्मा गरेको मूल रकम मात्र फिर्ता पाउँछन्। संस्था दर्ता नभएसम्म ब्याज वा नाफा दाबी गर्न पाइँदैन।'], ru_m3:['Choosing a business needs at least a two-thirds vote.','व्यवसाय छनोटमा कम्तीमा दुई-तिहाइ बहुमत आवश्यक।'],
  ru_t1:['Joint account in a class A or B commercial bank, run by two signatures: chairperson and treasurer or secretary.','\u2018क\u2019 वा \u2018ख\u2019 वर्गको वाणिज्य बैंकमा संयुक्त खाता: अध्यक्ष र कोषाध्यक्ष/सचिवको संयुक्त दस्तखत।'], ru_t2:['Every member can sign in and check their own account at any time.','हरेक सदस्यले जुनसुकै बेला साइन इन गरी आफ्नो खाता हेर्न सक्छन्।'], ru_t3:['Income and spending are reviewed in the first week of every month.','हरेक महिनाको पहिलो हप्ता आय-व्यय समीक्षा।'],
 };
-const S={cfg:null,members:[],deposits:[],loans:[],repays:[],entries:[],notices:[],admin:false,open:false,G:null,pending:[],log:[],note:'',state:'loading',lang:'ne',tab:'home',filter:'all',me:''};
-const DEF={name:'72 Ventures Pvt. Ltd.',shareValue:200,minShares:5,maxShares:10,startMonth:'2026-11',loanRate:8,loanLimitPct:80,loanTermMax:11,dueDay:25,graceDays:3,lateFee:500,allocInvest:50,allocLoan:35,allocReserve:15,bank:'',chair:'',treasurer:'',email:'ventures72.official@gmail.com',openLedger:'no'};
-const TABS=['home','me','members','savings','loans','ledger','notices','plan','history','settings'];
+const S={cfg:null,members:[],deposits:[],loans:[],repays:[],entries:[],notices:[],mfees:[],admin:false,open:false,G:null,pending:[],log:[],note:'',state:'loading',lang:'ne',tab:'home',filter:'all',me:''};
+const DEF={name:'72 Ventures Pvt. Ltd.',shareValue:200,minShares:5,maxShares:10,startMonth:'2026-11',loanRate:8,loanLimitPct:80,loanTermMax:11,dueDay:25,graceDays:3,lateFee:500,regFee:500,renewFee:500,allocInvest:50,allocLoan:35,allocReserve:15,bank:'',chair:'',treasurer:'',email:'ventures72.official@gmail.com',openLedger:'no'};
+const TABS=['home','me','members','savings','fees','loans','ledger','notices','plan','history','settings'];
 let C=null;
 const LIMITED=['home','me','notices','plan'];
 const canSee=x=>S.admin||(x!=='settings'&&x!=='history'&&(S.open||LIMITED.includes(x)));
@@ -274,6 +276,11 @@ const fdate=s=>s?new Intl.DateTimeFormat(loc(),{day:'numeric',month:'short',year
 const fmonth=(ym,long)=>new Intl.DateTimeFormat(loc(),long?{month:'long',year:'numeric'}:{month:'short'}).format(parse(ym+'-01'));
 const cfg=()=>{const c=Object.assign({},DEF,S.cfg||{});if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(c.startMonth))c.startMonth=DEF.startMonth;return c};
 const months=()=>{const d=parse(cfg().startMonth+'-01');return Array.from({length:12},(_,i)=>iso(new Date(d.getFullYear(),d.getMonth()+i,1)).slice(0,7))};
+const curYear=()=>{const s=cfg().startMonth,n=today().slice(0,7);if(n<s)return 1;const [a,b]=s.split('-').map(Number),[c,d]=n.split('-').map(Number);return Math.floor(((c-a)*12+(d-b))/12)+1};
+const yrStart=y=>addMonths(cfg().startMonth+'-01',(y-1)*12).slice(0,7);
+const yrSpan=y=>t('yr_span',fmt(y),fmonth(yrStart(y),true),fmonth(addMonths(yrStart(y)+'-01',11).slice(0,7),true));
+const feeName=f=>f.kind==='reg'?t('reg_fee'):t('renew_fee')+' · '+t('yr',fmt(f.year));
+const feeOf=(mid,kind,y)=>S.mfees.find(f=>f.memberId===mid&&f.kind===kind&&(kind==='reg'||num(f.year)===y));
 const sn=m=>m&&m.serial?'72V-'+String(m.serial).padStart(3,'0'):'—';
 const bySerial=(a,b)=>(a.serial||1e9)-(b.serial||1e9)||String(a.name).localeCompare(b.name);
 const roleName=r=>t('r_'+(['chair','treasurer','secretary'].includes(r)?r:'member'));
@@ -290,14 +297,16 @@ function calc(){
     const days=Math.max(0,Math.round((parse(td)-parse(from))/864e5));
     return {...l,out:o,repaid:paid[l.id]||0,dueOn,status:o<=0?'closed':(td>dueOn?'overdue':'active'),accrued:Math.round(o*num(l.rate)/100*days/365)}});
   let inc=0, exp=0; S.entries.forEach(e=>e.kind==='expense'?exp+=num(e.amount):inc+=num(e.amount));
-  const cash=dep+fees+repP+repI+inc-exp-lent, capital=dep+fees+repI+inc-exp;
+  const mfee=S.mfees.reduce((a,f)=>a+num(f.amount),0);
+  const cash=dep+fees+mfee+repP+repI+inc-exp-lent, capital=dep+fees+mfee+repI+inc-exp;
   const pool=capital*num(c.allocLoan)/100;
   const limit=id=>Math.max(0,(sav[id]||0)*num(c.loanLimitPct)/100-(owe[id]||0));
-  return {c,mBy,sav,shr,dep,shares,fees,repI,lent,out,owe,loans,inc,exp,cash,capital,pool,poolLeft:Math.max(0,pool-out),limit,nm:id=>mBy[id]?mBy[id].name:'—'};
+  return {c,mBy,sav,shr,dep,shares,fees,mfee,repI,lent,out,owe,loans,inc,exp,cash,capital,pool,poolLeft:Math.max(0,pool-out),limit,nm:id=>mBy[id]?mBy[id].name:'—'};
 }
 function ledgerRows(){
   const r=[];
   S.deposits.forEach(d=>{r.push({date:d.date||d.month+'-01',type:'dep',desc:C.nm(d.memberId)+' · '+fmonth(d.month,true)+' · '+fmt(d.shares)+' '+t('shares'),in:num(d.amount),out:0});if(num(d.fee)>0)r.push({date:d.date||d.month+'-01',type:'fee',desc:C.nm(d.memberId)+' · '+fmonth(d.month,true),in:num(d.fee),out:0})});
+  S.mfees.forEach(f=>r.push({date:f.date,type:'mfee',desc:C.nm(f.memberId)+' · '+feeName(f),in:num(f.amount),out:0}));
   S.loans.forEach(l=>r.push({date:l.issued,type:'loan',desc:C.nm(l.memberId)+(l.purpose?' · '+l.purpose:''),in:0,out:num(l.principal)}));
   S.repays.forEach(p=>{const l=S.loans.find(x=>x.id===p.loanId);r.push({date:p.date,type:'rep',desc:(l?C.nm(l.memberId):'—')+' · '+t('principal')+' '+fmt(p.principal)+' + '+t('interest')+' '+fmt(p.interest),in:num(p.principal)+num(p.interest),out:0})});
   S.entries.forEach(e=>r.push({date:e.date,type:e.kind==='expense'?'expense':'income',desc:[e.category,e.note].filter(Boolean).join(' · '),in:e.kind==='expense'?0:num(e.amount),out:e.kind==='expense'?num(e.amount):0,id:e.id}));
@@ -305,7 +314,7 @@ function ledgerRows(){
   let bal=0; r.forEach(x=>{bal+=x.in-x.out;x.bal=bal});
   return r;
 }
-const typeName=k=>({dep:t('l_dep'),loan:t('l_loan'),rep:t('l_rep'),fee:t('late_fee'),income:t('income'),expense:t('expense')}[k]);
+const typeName=k=>({dep:t('l_dep'),loan:t('l_loan'),rep:t('l_rep'),fee:t('late_fee'),mfee:t('l_mfee'),income:t('income'),expense:t('expense')}[k]);
 
 /* ---------- views ---------- */
 function chrome(){
@@ -331,7 +340,7 @@ function render(){
     v.innerHTML=`<form class="panel login" id="auth-form" data-k="${st+S.lang}"><img class="login-logo" src="/logo.jpg" alt="72 Ventures Pvt. Ltd.">${inner}<div class="err" id="auth-err" hidden></div><button class="btn">${st==='setpass'?t('save'):st==='signup'?t('su_btn'):t('sign_in')}</button>${st==='login'?`<button type="button" class="link" data-act="go-signup">${t('su_link')}</button>${S.pubEmail?`<p class="sub" style="text-align:center">${t('help_mail')}: <b>${esc(S.pubEmail)}</b></p>`:''}`:st==='signup'?`<button type="button" class="link" data-act="go-login">${t('su_back')}</button>`:''}</form>`;return}
   if(S.state==='nodb'){v.innerHTML=`<div class="empty"><h3>${t('nodb_h')}</h3><p>${t('nodb_p')}</p></div>`;return}
   C=calc();
-  v.innerHTML=({home:vHome,me:vMe,members:vMembers,savings:vSavings,loans:vLoans,ledger:vLedger,notices:vNotices,plan:vPlan,history:vHistory,settings:vSettings}[S.tab])();
+  v.innerHTML=({home:vHome,me:vMe,members:vMembers,savings:vSavings,fees:vFees,loans:vLoans,ledger:vLedger,notices:vNotices,plan:vPlan,history:vHistory,settings:vSettings}[S.tab])();
 }
 const emptyBox=()=>`<div class="empty"><h3>${t('empty_h')}</h3><p>${S.admin?t('empty_admin'):t('empty_view')}</p>${S.admin?`<button class="btn" data-act="add-member">${t('add_member')}</button>`:''}</div>`;
 const head=(title,tools,sub)=>`<div><div class="bar"><h2>${title}</h2><div class="tools">${S.admin?tools||'':''}</div></div>${sub?`<p class="sub">${sub}</p>`:''}</div>`;
@@ -397,6 +406,7 @@ function vMe(){
   <div class="two">
     <section class="panel"><h3>${t('me_months')}</h3><div class="list">${months().map((ym,i)=>{const d=S.deposits.find(x=>x.memberId===m.id&&x.month===ym), due=!d&&ym<=nowYm&&(!m.joined||m.joined.slice(0,7)<=ym);
       return `<div class="li"><div>${fmt(i+1)}. ${fmonth(ym,true)}${d?`<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${num(d.fee)>0?' · '+t('late_fee')+' '+money(d.fee):''}${proofBtns(d)}</small>`:''}</div>${d?`<b class="num">${money(d.amount)}</b>`:`<span class="chip ${due?'warn':''}">${due?t('due'):t('later')}</span>`}</div>`}).join('')}</div></section>
+    <section class="panel"><h3>${t('fees')}</h3><p class="sub">${t('fees_hint',money(C.c.regFee),money(C.c.renewFee),fmonth(C.c.startMonth,true))}</p>${feeList(m)}</section>
     <section class="panel"><h3>${t('me_loans')}</h3>${ls.length?`<div class="list">${ls.map(l=>`<div class="li"><div><button class="link" data-act="view-loan" data-id="${l.id}">${fdate(l.issued)}</button> ${statusChip(l.status)}<small>${t('due_date')}: ${fdate(l.dueOn)} · ${t('outstanding')}: ${money(l.out)}</small></div><b class="num">${money(l.principal)}</b></div>`).join('')}</div>`:`<p class="sub">${t('none_yet')}</p>`}</section>
   </div>`;
 }
@@ -422,6 +432,23 @@ function vSavings(){
   ${list.map(m=>`<tr><td><small class="sub">${sn(m)}</small> ${esc(m.name)}</td>${ms.map(ym=>`<td>${cell(m,ym)}</td>`).join('')}<td class="num"><b>${money(C.sav[m.id]||0)}</b></td></tr>`).join('')}
   </tbody><tfoot><tr><td>${t('total')}</td>${ms.map(ym=>{const a=S.deposits.filter(d=>d.month===ym).reduce((x,d)=>x+num(d.amount),0);return `<td class="num" style="text-align:center">${a?kf(a):''}</td>`}).join('')}<td class="num">${money(C.dep)}</td></tr></tfoot></table></div>`;
 }
+function vFees(){
+  if(!S.members.length)return emptyBox();
+  const c=C.c, cy=curYear(), ys=Array.from({length:Math.max(2,cy)-1},(_,i)=>i+2);
+  const list=S.members.filter(m=>m.status!=='left'||S.mfees.some(f=>f.memberId===m.id)).sort(bySerial);
+  const cell=(m,kind,y)=>{const f=feeOf(m.id,kind,y), due=!f&&m.status!=='left'&&(kind==='reg'||y<=cy);
+    const cls='cell'+(f?' paid':due?' due':''), txt=f?'✓ '+t('paid'):due?t('unpaid'):(S.admin?'+':'');
+    return S.admin?`<button class="${cls}" data-act="fee" data-m="${m.id}" data-k="${kind}" data-y="${y}" aria-label="${esc(m.name)} ${kind==='reg'?t('reg_fee'):t('renew_fee')+' '+y}">${txt}</button>`:`<span class="${cls}">${txt}</span>`};
+  const tot=m=>S.mfees.filter(f=>f.memberId===m.id).reduce((a,f)=>a+num(f.amount),0);
+  return head(t('fees'),`<button class="btn" data-act="add-fee">${t('rec_fee')}</button>`,t('fees_hint',money(c.regFee),money(c.renewFee),fmonth(c.startMonth,true))+' '+t('m_year')+': '+yrSpan(cy))+
+  `<div class="scroll"><table class="grid"><thead><tr><th>${t('r_member')}</th><th>${t('reg_fee')}<br>${money(c.regFee)}</th>${ys.map(y=>`<th class="${y===cy?'now':''}">${t('renew_fee')}<br>${t('yr',fmt(y))}</th>`).join('')}<th class="num">${t('total')}</th></tr></thead><tbody>
+  ${list.map(m=>`<tr><td><small class="sub">${sn(m)}</small> ${esc(m.name)}</td><td>${cell(m,'reg',1)}</td>${ys.map(y=>`<td>${cell(m,'renew',y)}</td>`).join('')}<td class="num"><b>${money(tot(m))}</b></td></tr>`).join('')}
+  </tbody><tfoot><tr><td>${t('total')}</td><td class="num" style="text-align:center">${fmt(S.mfees.filter(f=>f.kind==='reg').length)}</td>${ys.map(y=>`<td class="num" style="text-align:center">${fmt(S.mfees.filter(f=>f.kind==='renew'&&num(f.year)===y).length)}</td>`).join('')}<td class="num">${money(C.mfee)}</td></tr></tfoot></table></div>`;
+}
+function feeList(m){
+  const cy=curYear(), items=[{kind:'reg',year:1}].concat(Array.from({length:Math.max(0,cy-1)},(_,i)=>({kind:'renew',year:i+2})));
+  return `<div class="list">${items.map(x=>{const f=feeOf(m.id,x.kind,x.year);return `<div class="li"><div>${feeName(x)}${f?`<small>${fdate(f.date)}${f.note?' · '+esc(f.note):''}${proofBtns(f)}</small>`:x.kind==='renew'?`<small>${yrSpan(x.year)}</small>`:''}</div>${f?`<b class="num">${money(f.amount)}</b>`:`<span class="chip warn">${t('unpaid')}</span>`}</div>`}).join('')}</div>`;
+}
 const pics=n=>(n.images||[]).length?`<div class="pics">${n.images.map(id=>`<button class="pic" data-act="view-img" data-id="${id}"><img src="/img/${id}.jpg" alt="" loading="lazy"></button>`).join('')}</div>`:'';
 const proofBtns=d=>(d.proof||[]).map(id=>` <button class="link" data-act="view-img" data-id="${id}">📎 ${t('see_proof')}</button>`).join('');
 const nomineeTxt=m=>m.nomineeName?esc(m.nomineeName)+(m.nomineeRelation?' ('+esc(m.nomineeRelation)+')':'')+(m.nomineePhone?' · '+esc(m.nomineePhone):''):t('no_nominee');
@@ -436,7 +463,7 @@ function vLoans(){
 }
 function vLedger(){
   const all=ledgerRows(), rows=all.filter(x=>S.filter==='all'||x.type===S.filter).reverse();
-  const opts=['all','dep','fee','loan','rep','income','expense'].map(k=>`<option value="${k}" ${k===S.filter?'selected':''}>${k==='all'?t('all'):typeName(k)}</option>`).join('');
+  const opts=['all','dep','fee','mfee','loan','rep','income','expense'].map(k=>`<option value="${k}" ${k===S.filter?'selected':''}>${k==='all'?t('all'):typeName(k)}</option>`).join('');
   return `<div class="bar"><h2>${t('ledger')}</h2><div class="tools"><select id="ledger-filter" class="btn ghost" aria-label="${t('kind')}">${opts}</select>${S.admin?`<button class="btn" data-act="add-entry">${t('add_entry')}</button>`:''}</div></div>`+
   (rows.length?`<div class="scroll"><table><thead><tr><th>${t('date')}</th><th>${t('kind')}</th><th>${t('desc')}</th><th class="num">${t('money_in')}</th><th class="num">${t('money_out')}</th><th class="num">${t('balance')}</th><th></th></tr></thead><tbody>
   ${rows.map(x=>`<tr><td style="white-space:nowrap">${fdate(x.date)}</td><td style="white-space:nowrap">${typeName(x.type)}</td><td>${esc(x.desc)}</td><td class="num in">${x.in?fmt(x.in):''}</td><td class="num out">${x.out?fmt(x.out):''}</td><td class="num">${fmt(x.bal)}</td><td>${S.admin&&x.id?`<button class="btn ghost sm" data-act="edit-entry" data-id="${x.id}">${t('edit')}</button>`:''}</td></tr>`).join('')}
@@ -451,7 +478,7 @@ function vPlan(){
   const c=C.c, ul=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
   const P=(h,a)=>`<section class="panel"><h3>${h}</h3>${ul(a)}</section>`;
   return `<div class="bar"><h2>${t('plan')}</h2></div><div class="rules">`+
-   P(t('ru_share'),[t('ru_s1',money(c.shareValue)),t('ru_s2',fmt(c.minShares),fmt(c.maxShares),money(c.minShares*c.shareValue),money(c.maxShares*c.shareValue),fmt(c.dueDay)),t('ru_s4',fmt(c.graceDays),money(c.lateFee)),t('ru_s5'),t('ru_s3')])+
+   P(t('ru_share'),[t('ru_s1',money(c.shareValue)),t('ru_s2',fmt(c.minShares),fmt(c.maxShares),money(c.minShares*c.shareValue),money(c.maxShares*c.shareValue),fmt(c.dueDay)),t('ru_s4',fmt(c.graceDays),money(c.lateFee)),t('fees_hint',money(c.regFee),money(c.renewFee),fmonth(c.startMonth,true)),t('ru_s5'),t('ru_s3')])+
    P(t('ru_loan'),[t('ru_l1',fmt(c.loanLimitPct)),t('ru_l2',fmt(c.loanRate)),t('ru_l3',fmt(c.loanTermMax))])+
    P(t('ru_fund'),[t('inv')+' · '+fmt(c.allocInvest)+'%',t('loanpool')+' · '+fmt(c.allocLoan)+'%',t('reserve')+' · '+fmt(c.allocReserve)+'%'])+
    P(t('ru_road'),[t('ru_r1'),t('ru_r2'),t('ru_r3')])+
@@ -460,7 +487,7 @@ function vPlan(){
    P(t('ru_trust'),[t('ru_t1')+(c.bank?' ('+esc(c.bank)+')':''),t('ru_t2'),t('ru_t3')])+`</div>`;
 }
 function vHistory(){
-  const cn={members:'members',deposits:'savings',loans:'loans',repayments:'l_rep',entries:'ledger',notices:'notices',cfg:'settings'};
+  const cn={members:'members',deposits:'savings',loans:'loans',repayments:'l_rep',entries:'ledger',notices:'notices',mfees:'fees',cfg:'settings'};
   const when=x=>new Intl.DateTimeFormat(loc(),{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(x));
   return `<div><div class="bar"><h2>${t('history')}</h2></div><p class="sub">${t('h_hint')}</p></div>`+
   (S.log.length?`<div class="scroll"><table><thead><tr><th>${t('h_when')}</th><th>${t('h_who')}</th><th>${t('h_what')}</th><th>${t('desc')}</th></tr></thead><tbody>
@@ -470,7 +497,7 @@ function vHistory(){
 function vSettings(){
   const c=C.c, row=(k,v)=>`<dt>${k}</dt><dd>${v||'—'}</dd>`;
   return head(t('settings'),`<button class="btn" data-act="edit-settings">${t('edit_settings')}</button>`,t('settings_hint'))+
-  `<section class="panel"><dl class="kv" style="margin:0">${row(t('co_name'),esc(c.name))+row(t('share_value'),money(c.shareValue))+row(t('min_sh'),fmt(c.minShares))+row(t('max_sh'),fmt(c.maxShares))+row(t('due_day'),fmt(c.dueDay))+row(t('grace'),fmt(c.graceDays))+row(t('fee_amt'),money(c.lateFee))+row(t('start_m'),fmonth(c.startMonth,true))+row(t('rate'),fmt(c.loanRate)+'%')+row(t('limit_pct'),fmt(c.loanLimitPct)+'%')+row(t('term_max'),fmt(c.loanTermMax))+row(t('a_inv'),fmt(c.allocInvest)+'%')+row(t('a_loan'),fmt(c.allocLoan)+'%')+row(t('a_res'),fmt(c.allocReserve)+'%')+row(t('bank'),esc(c.bank))+row(t('chair'),esc(c.chair))+row(t('treasurer'),esc(c.treasurer))+row(t('email'),esc(c.email))+row(t('open_ledger'),c.openLedger==='yes'?t('yes'):t('no'))}</dl></section>`;
+  `<section class="panel"><dl class="kv" style="margin:0">${row(t('co_name'),esc(c.name))+row(t('share_value'),money(c.shareValue))+row(t('min_sh'),fmt(c.minShares))+row(t('max_sh'),fmt(c.maxShares))+row(t('due_day'),fmt(c.dueDay))+row(t('grace'),fmt(c.graceDays))+row(t('fee_amt'),money(c.lateFee))+row(t('reg_fee'),money(c.regFee))+row(t('renew_fee'),money(c.renewFee))+row(t('start_m'),fmonth(c.startMonth,true))+row(t('rate'),fmt(c.loanRate)+'%')+row(t('limit_pct'),fmt(c.loanLimitPct)+'%')+row(t('term_max'),fmt(c.loanTermMax))+row(t('a_inv'),fmt(c.allocInvest)+'%')+row(t('a_loan'),fmt(c.allocLoan)+'%')+row(t('a_res'),fmt(c.allocReserve)+'%')+row(t('bank'),esc(c.bank))+row(t('chair'),esc(c.chair))+row(t('treasurer'),esc(c.treasurer))+row(t('email'),esc(c.email))+row(t('open_ledger'),c.openLedger==='yes'?t('yes'):t('no'))}</dl></section>`;
 }
 
 /* ---------- dialog ---------- */
@@ -517,7 +544,7 @@ const errText=e=>e&&e.msg&&T['x_'+e.msg]?t('x_'+e.msg):t('e_save');
 let lastJson='';
 async function load(){
   try{const d=await api('state'), j=JSON.stringify(d); if(j===lastJson&&S.state!=='loading'&&S.state!=='login')return; lastJson=j;
-    Object.assign(S,{cfg:d.cfg,members:d.members.filter(m=>m.status!=='pending'),pending:d.members.filter(m=>m.status==='pending'),note:'',deposits:d.deposits,loans:d.loans,repays:d.repayments,entries:d.entries,notices:d.notices,admin:d.admin,open:d.open,me:d.me,G:d.totals,log:d.log||[],state:d.mustChange?'setpass':'ready'})}
+    Object.assign(S,{cfg:d.cfg,members:d.members.filter(m=>m.status!=='pending'),pending:d.members.filter(m=>m.status==='pending'),note:'',deposits:d.deposits,loans:d.loans,repays:d.repayments,entries:d.entries,notices:d.notices,mfees:d.mfees||[],admin:d.admin,open:d.open,me:d.me,G:d.totals,log:d.log||[],state:d.mustChange?'setpass':'ready'})}
   catch(e){if(e.status===401){S.state='login';lastJson='';if(e.email)S.pubEmail=e.email}else if(S.state==='loading')S.state='nodb'}
   render();
 }
@@ -539,7 +566,7 @@ const col=n=>db.collection(n);
 const put=(n,id,data)=>(id?col(n).doc(id):col(n).doc()).set(data);
 const memberOpts=()=>S.members.filter(m=>m.status!=='left').sort((a,b)=>String(a.name).localeCompare(b.name)).map(m=>({v:m.id,l:m.name}));
 function fMember(id){
-  const m=id?S.members.find(x=>x.id===id):null, used=id&&(S.deposits.some(d=>d.memberId===id)||S.loans.some(l=>l.memberId===id));
+  const m=id?S.members.find(x=>x.id===id):null, used=id&&(S.deposits.some(d=>d.memberId===id)||S.loans.some(l=>l.memberId===id)||S.mfees.some(f=>f.memberId===id));
   openForm({title:m?t('edit_member'):t('add_member'),fields:[
     {id:'name',label:t('name'),value:m?.name,req:1},{id:'phone',label:t('phone'),value:m?.phone,type:'tel'},{id:'address',label:t('address'),value:m?.address},
     {id:'nomineeName',label:t('nominee_name'),value:m?.nomineeName},{id:'nomineeRelation',label:t('nominee_rel'),value:m?.nomineeRelation},{id:'nomineePhone',label:t('nominee_phone'),value:m?.nomineePhone,type:'tel'},
@@ -565,6 +592,20 @@ function fDeposit(mid,ym){
    check:v=>(v.shares<c.minShares||v.shares>c.maxShares||v.shares%1)?t('share_range',fmt(c.minShares),fmt(c.maxShares)):'',
    save:v=>{const M=mid&&fixed?mid:v.memberId, Y=fixed?ym:v.month;return put('deposits',M+'_'+Y,{memberId:M,month:Y,shares:v.shares,amount:v.shares*c.shareValue,fee:num(v.fee),date:v.date,note:v.note,proof:v.proof})},
    del:ex?()=>col('deposits').doc(ex.id).delete():null});
+}
+function fFee(mid,kind,year){
+  const c=cfg(), cy=curYear(), fixed=!!mid&&!!kind, ex=fixed?feeOf(mid,kind,num(year)):null;
+  const yOpts=Array.from({length:cy},(_,i)=>i+2).map(y=>({v:y,l:yrSpan(y)}));
+  openForm({title:t('rec_fee'),fields:[
+    fixed?{id:'m',type:'fixed',label:t('r_member'),text:C.nm(mid)}:{id:'memberId',label:t('r_member'),type:'select',options:memberOpts()},
+    fixed?{id:'k',type:'fixed',label:t('fee_kind'),text:kind==='reg'?t('reg_fee'):t('renew_fee')+' · '+yrSpan(num(year))}:{id:'kind',label:t('fee_kind'),type:'select',value:'reg',options:[{v:'reg',l:t('reg_fee')},{v:'renew',l:t('renew_fee')}]},
+    ...(fixed?[]:[{id:'year',label:t('m_year')+' ('+t('renew_fee')+')',type:'select',value:Math.max(2,cy),options:yOpts}]),
+    {id:'date',label:t('paid_on'),type:'date',value:ex?.date||today(),req:1},{id:'note',label:t('note'),value:ex?.note},
+    {id:'proof',label:t('proof'),type:'images',value:ex?.proof||[],max:2}],
+   live:v=>{const k=fixed?kind:v.kind;return `${t('amount')}: <b>${money(k==='reg'?c.regFee:c.renewFee)}</b>`},
+   check:v=>{const M=fixed?mid:v.memberId,K=fixed?kind:v.kind,Y=K==='reg'?1:num(fixed?year:v.year);return !fixed&&feeOf(M,K,Y)?t('fee_dup'):''},
+   save:v=>{const M=fixed?mid:v.memberId,K=fixed?kind:v.kind,Y=K==='reg'?1:num(fixed?year:v.year);return put('mfees',M+'_'+K+'_'+Y,{memberId:M,kind:K,year:Y,date:v.date,note:v.note,proof:v.proof})},
+   del:ex?()=>col('mfees').doc(ex.id).delete():null});
 }
 function fLoan(id){
   const c=cfg(), l=id?C.loans.find(x=>x.id===id):null, opts=memberOpts();
@@ -620,7 +661,7 @@ function fNotice(id){
 function fSettings(){
   const c=cfg(), N=(id,k,z)=>({id,label:t(k),type:'number',value:c[id],req:1,zero:z});
   openForm({title:t('edit_settings'),fields:[
-    {id:'name',label:t('co_name'),value:c.name,req:1},N('shareValue','share_value'),N('minShares','min_sh'),N('maxShares','max_sh'),N('dueDay','due_day'),N('graceDays','grace',1),N('lateFee','fee_amt',1),
+    {id:'name',label:t('co_name'),value:c.name,req:1},N('shareValue','share_value'),N('minShares','min_sh'),N('maxShares','max_sh'),N('dueDay','due_day'),N('graceDays','grace',1),N('lateFee','fee_amt',1),N('regFee','reg_fee',1),N('renewFee','renew_fee',1),
     {id:'startMonth',label:t('start_m'),value:c.startMonth,req:1,ph:'2026-11'},
     N('loanRate','rate',1),N('loanLimitPct','limit_pct'),N('loanTermMax','term_max'),N('allocInvest','a_inv',1),N('allocLoan','a_loan',1),N('allocReserve','a_res',1),
     {id:'bank',label:t('bank'),value:c.bank},{id:'chair',label:t('chair'),value:c.chair},{id:'treasurer',label:t('treasurer'),value:c.treasurer},{id:'email',label:t('email'),value:c.email,type:'email'},
@@ -633,6 +674,7 @@ function memberInfo(id){
   const ds=S.deposits.filter(d=>d.memberId===id).sort((a,b)=>a.month<b.month?-1:1), ls=C.loans.filter(l=>l.memberId===id);
   openInfo(m.name,`<dl class="kv" style="margin:0"><dt>${t('serial')}</dt><dd>${sn(m)}</dd><dt>${t('role')}</dt><dd>${roleName(m.role)}</dd><dt>${t('joined')}</dt><dd>${fdate(m.joined)||'—'}</dd>${m.address?`<dt>${t('address')}</dt><dd>${esc(m.address)}</dd>`:''}${S.admin||m.id===S.me?`<dt>${t('nominee')}</dt><dd>${nomineeTxt(m)}</dd>`:''}<dt>${t('shares')}</dt><dd>${fmt(C.shr[id]||0)}</dd><dt>${t('saved')}</dt><dd>${money(C.sav[id]||0)}</dd><dt>${t('loan_out')}</dt><dd>${money(C.owe[id]||0)}</dd><dt>${t('loan_limit')}</dt><dd>${money(C.limit(id))}</dd></dl>
   <div><b>${t('savings')}</b><div class="list">${ds.map(d=>`<div class="li"><div>${fmonth(d.month,true)}<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${proofBtns(d)}</small></div><b class="num">${money(d.amount)}</b></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>
+  <div><b>${t('fees')}</b>${feeList(m)}</div>
   ${ls.length?`<div><b>${t('loans')}</b><div class="list">${ls.map(l=>`<div class="li"><div>${fdate(l.issued)} ${statusChip(l.status)}<small>${t('outstanding')}: ${money(l.out)}</small></div><b class="num">${money(l.principal)}</b></div>`).join('')}</div></div>`:''}`);
 }
 function loanInfo(id){
@@ -663,7 +705,7 @@ document.addEventListener('click',ev=>{
     b.disabled=true; (a==='approve'?api('save',{col:'members',id,data:{...m,status:'active',admin:'no',password:''}}):api('delete',{col:'members',id})).then(load).then(()=>toast(a==='approve'?t('saved_ok'):t('deleted_ok'))).catch(e=>{b.disabled=false;toast(errText(e))});return}
   if(a==='form-del'){ if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t('del_sure');return}
     const d=F.del; b.disabled=true; d().then(()=>{dlg.close();toast(t('deleted_ok'))}).catch(e=>{b.disabled=false;delete b.dataset.sure;b.textContent=t('del');fail(e&&e.soft?e.soft:e&&e.msg==='has_records'?t('has_records'):errText(e))});return}
-  ({'add-member':()=>{S.tab='members';render();fMember()},'edit-member':()=>fMember(id),'dep':()=>fDeposit(b.dataset.m,b.dataset.ym),'add-dep':()=>fDeposit(),
+  ({'add-member':()=>{S.tab='members';render();fMember()},'edit-member':()=>fMember(id),'dep':()=>fDeposit(b.dataset.m,b.dataset.ym),'add-dep':()=>fDeposit(),'fee':()=>fFee(b.dataset.m,b.dataset.k,b.dataset.y),'add-fee':()=>fFee(),
     'add-loan':()=>fLoan(),'edit-loan':()=>fLoan(id),'repay':()=>fRepay(id),'edit-repay':()=>fRepay(b.dataset.loan,id),
     'add-entry':()=>fEntry(),'edit-entry':()=>fEntry(id),'add-notice':()=>fNotice(),'edit-notice':()=>fNotice(id),'edit-settings':()=>fSettings()}[a]||(()=>{}))();
 });

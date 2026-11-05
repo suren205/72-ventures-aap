@@ -14,9 +14,9 @@ const STATIC = { '/': 'index.html', '/index.html': 'index.html', '/manifest.webm
 const TYPES = { html: 'text/html; charset=utf-8', webmanifest: 'application/manifest+json', js: 'text/javascript; charset=utf-8', png: 'image/png', jpg: 'image/jpeg' };
 // Files may sit next to server.js or in a "public" folder; next to server.js wins.
 const findFile = n => [path.join(__dirname, n), path.join(__dirname, 'public', n)].find(f => fs.existsSync(f));
-const COLS = ['members', 'deposits', 'loans', 'repayments', 'entries', 'notices'];
+const COLS = ['members', 'deposits', 'loans', 'repayments', 'entries', 'notices', 'mfees'];
 const DEF_CFG = { name: '72 Ventures Pvt. Ltd.', shareValue: 200, minShares: 5, maxShares: 10, startMonth: '2026-11',
-  loanRate: 8, loanLimitPct: 80, loanTermMax: 11, dueDay: 25, graceDays: 3, lateFee: 500,
+  loanRate: 8, loanLimitPct: 80, loanTermMax: 11, dueDay: 25, graceDays: 3, lateFee: 500, regFee: 500, renewFee: 500,
   allocInvest: 50, allocLoan: 35, allocReserve: 15, bank: '', chair: '', treasurer: '', email: 'ventures72.official@gmail.com', openLedger: 'no' };
 
 /* ---------- storage ---------- */
@@ -42,7 +42,7 @@ function boot() {
     db = JSON.parse(fs.readFileSync(FILE, 'utf8'));
     db.cfg = Object.assign({}, DEF_CFG, db.cfg);
     COLS.forEach(c => db[c] = db[c] || {}); db.log = db.log || [];
-    fillSerials(); renumber();   // also closes gaps left by older deletes
+    renumber();   // also closes gaps left by older deletes
     return;
   }
   db = { secret: crypto.randomBytes(32).toString('hex'), cfg: { ...DEF_CFG } };
@@ -50,23 +50,28 @@ function boot() {
   const pw = process.env.ADMIN_PASSWORD || crypto.randomBytes(6).toString('base64url');
   db.members.admin = { name: 'Admin', loginId: 'admin', pass: hashPass(pw), pv: 1, admin: true, mustChange: true,
     role: 'member', status: 'active', joined: today(), phone: '', address: '', note: '' };
-  fillSerials();
+  renumber();
   persist();
   console.log('\n  First start. Sign in with:\n    Login ID: admin\n    Password: ' + pw + '\n  You will be asked to set your own password.\n');
 }
 
 /* ---------- member numbers (no gaps: after a delete, the ones below move up) ---------- */
-function renumber() {
-  const list = Object.values(db.members).filter(m => m.serial && m.status !== 'pending').sort((a, b) => a.serial - b.serial);
-  list.forEach((m, i) => { m.serial = i + 1; });
-  db.nextSerial = list.length + 1;
+/* Member No. follows the order the IDs were created (sign-up or admin add time).
+   Pending sign-ups get no number until approved; then they take their place by creation time. */
+function stampCreated() {   // older records have no creation time: take it from the history log, else the join date
+  for (const [id, m] of Object.entries(db.members)) {
+    if (m.created) continue;
+    const hit = db.log.find(e => e.col === 'members' && (e.act === 'signup' || e.act === 'add') && e.label === m.name);
+    m.created = id === 'admin' ? '0000-00-00T00:00:00.000Z' : hit ? hit.t : String(m.joined || today()) + 'T00:00:00.000Z';
+  }
 }
-function giveSerial(m) { if (!m.serial && m.status !== 'pending') { db.nextSerial = db.nextSerial || 1; m.serial = db.nextSerial++; } }
-function fillSerials() {   // older records: number them by join date
-  db.nextSerial = Math.max(db.nextSerial || 1, ...Object.values(db.members).map(m => (m.serial || 0) + 1));
-  Object.values(db.members).filter(m => !m.serial && m.status !== 'pending')
-    .sort((a, b) => (b.admin ? 1 : 0) - (a.admin ? 1 : 0) || String(a.joined).localeCompare(String(b.joined)) || String(a.name).localeCompare(String(b.name)))
-    .forEach(giveSerial);
+function renumber() {
+  stampCreated();
+  const list = Object.values(db.members).filter(m => m.status !== 'pending')
+    .sort((a, b) => String(a.created).localeCompare(String(b.created)) || (a.serial || 1e9) - (b.serial || 1e9) || String(a.name).localeCompare(String(b.name)));
+  list.forEach((m, i) => { m.serial = i + 1; });
+  Object.values(db.members).filter(m => m.status === 'pending').forEach(m => { delete m.serial; });
+  db.nextSerial = list.length + 1;
 }
 
 /* ---------- sessions ---------- */
@@ -104,6 +109,7 @@ function labelOf(col, r) {
   if (col === 'repayments') return mName((db.loans[r.loanId] || {}).memberId) + ' · ' + r.date;
   if (col === 'entries') return r.category;
   if (col === 'notices') return r.title;
+  if (col === 'mfees') return mName(r.memberId) + ' · ' + (r.kind === 'reg' ? 'registration' : 'renewal y' + r.year);
   return '';
 }
 function diff(a, b) {
@@ -129,42 +135,43 @@ function totals() {
   const paid = {}; let repP = 0;
   for (const r of rows('repayments')) { paid[r.loanId] = (paid[r.loanId] || 0) + num(r.principal); repP += num(r.principal); T.repI += num(r.interest); }
   for (const l of rows('loans')) { const o = Math.max(0, num(l.principal) - (paid[l.id] || 0)); T.lent += num(l.principal); T.out += o; if (o > 0) T.openLoans++; }
+  T.mfee = 0; for (const f of rows('mfees')) T.mfee += num(f.amount);
   let inc = 0, exp = 0; for (const e of rows('entries')) e.kind === 'expense' ? exp += num(e.amount) : inc += num(e.amount);
-  T.cash = T.dep + T.fees + repP + T.repI + inc - exp - T.lent; T.capital = T.dep + T.fees + T.repI + inc - exp;
+  T.cash = T.dep + T.fees + T.mfee + repP + T.repI + inc - exp - T.lent; T.capital = T.dep + T.fees + T.mfee + T.repI + inc - exp;
   return T;
 }
 function stateFor(u) {
   const admin = !!u.admin, open = admin || db.cfg.openLedger === 'yes';
   const base = { me: u.id, admin, open, mustChange: !!u.mustChange, cfg: db.cfg, log: admin && !u.mustChange ? db.log.slice(-400).reverse() : [] };
-  if (u.mustChange) return { ...base, members: [], deposits: [], loans: [], repayments: [], entries: [], notices: [], totals: totals() };
+  if (u.mustChange) return { ...base, members: [], deposits: [], loans: [], repayments: [], entries: [], notices: [], mfees: [], totals: totals() };
   const view = m => admin ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, note: m.note, loginId: m.loginId || '', admin: !!m.admin, hasPass: !!m.pass, nomineeName: m.nomineeName || '', nomineeRelation: m.nomineeRelation || '', nomineePhone: m.nomineePhone || '' }
     : m.id === u.id ? { id: m.id, serial: m.serial || 0, name: m.name, phone: m.phone, address: m.address, role: m.role, joined: m.joined, status: m.status, loginId: m.loginId || '', nomineeName: m.nomineeName || '', nomineeRelation: m.nomineeRelation || '', nomineePhone: m.nomineePhone || '' }
     : { id: m.id, serial: m.serial || 0, name: m.name, role: m.role, joined: m.joined, status: m.status };
   const mine = x => open || x.memberId === u.id;
   const loans = rows('loans').filter(mine), seen = new Set(loans.map(l => l.id));
   return { ...base, members: rows('members').filter(m => admin || (m.status !== 'pending' && (open || m.id === u.id))).map(view), deposits: rows('deposits').filter(mine), loans,
-    repayments: rows('repayments').filter(r => seen.has(r.loanId)), entries: open ? rows('entries') : [], notices: rows('notices'), totals: totals() };
+    repayments: rows('repayments').filter(r => seen.has(r.loanId)), entries: open ? rows('entries') : [], notices: rows('notices'), mfees: rows('mfees').filter(mine), totals: totals() };
 }
 
 /* ---------- writes (admin only) ---------- */
 function save(admin, col, id, d) {
   d = d || {};
   if (col === 'cfg') {
-    const c = {}; for (const k of ['shareValue', 'minShares', 'maxShares', 'loanRate', 'loanLimitPct', 'loanTermMax', 'dueDay', 'graceDays', 'lateFee', 'allocInvest', 'allocLoan', 'allocReserve']) c[k] = num(d[k]);
+    const c = {}; for (const k of ['shareValue', 'minShares', 'maxShares', 'loanRate', 'loanLimitPct', 'loanTermMax', 'dueDay', 'graceDays', 'lateFee', 'regFee', 'renewFee', 'allocInvest', 'allocLoan', 'allocReserve']) c[k] = num(d[k]);
     for (const k of ['name', 'bank', 'chair', 'treasurer', 'email']) c[k] = str(d[k]);
     c.startMonth = str(d.startMonth); c.openLedger = d.openLedger === 'yes' ? 'yes' : 'no';
     need(c.name && isMonth(c.startMonth) && c.shareValue > 0 && c.minShares >= 1 && c.maxShares >= c.minShares && c.allocInvest + c.allocLoan + c.allocReserve === 100);
     logIt(admin.name, 'edit', 'cfg', '', diff(db.cfg, c)); db.cfg = c; return;
   }
   need(COLS.includes(col));
-  const old = id ? db[col][id] : null; need(!id || old || col === 'deposits');
+  const old = id ? db[col][id] : null; need(!id || old || col === 'deposits' || col === 'mfees');
   let rec;
   if (col === 'members') {
     rec = { ...(old || { pv: 1 }), name: str(d.name), phone: str(d.phone, 40), address: str(d.address), note: str(d.note, 500),
       nomineeName: str(d.nomineeName, 80), nomineeRelation: str(d.nomineeRelation, 40), nomineePhone: str(d.nomineePhone, 40),
       role: ['chair', 'treasurer', 'secretary'].includes(d.role) ? d.role : 'member', joined: isDate(d.joined) ? d.joined : today(), status: d.status === 'left' ? 'left' : 'active', admin: d.admin === 'yes' };
     need(rec.name);
-    giveSerial(rec);   // new member, or a sign-up being approved
+    rec.created = (old && old.created) || new Date().toISOString();
     need(!(id === admin.id && (!rec.admin || rec.status === 'left')), 'self_admin');
     const lid = str(d.loginId, 30).toLowerCase();
     if (lid) { need(/^[a-z0-9._-]{3,30}$/.test(lid), 'bad_login_id'); need(!rows('members').some(m => m.loginId === lid && m.id !== id), 'login_taken'); rec.loginId = lid; } else delete rec.loginId;
@@ -176,6 +183,13 @@ function save(admin, col, id, d) {
     const proof = (Array.isArray(d.proof) ? d.proof : []).map(String).filter(isImg).slice(0, 2);
     rec = { memberId: d.memberId, month: d.month, shares: sh, amount: sh * db.cfg.shareValue, fee: num(d.fee), date: d.date, note: str(d.note, 500), proof };
     if (db.deposits[id]) (db.deposits[id].proof || []).filter(x => !proof.includes(x)).forEach(dropImg);
+  } else if (col === 'mfees') {   // registration fee (once) and yearly renewal fee
+    const kind = d.kind === 'renew' ? 'renew' : 'reg', year = kind === 'reg' ? 1 : Math.round(num(d.year));
+    need(db.members[d.memberId] && isDate(d.date) && year >= 1 && year <= 50 && (kind === 'reg' || year >= 2));
+    id = d.memberId + '_' + kind + '_' + year;
+    const proof = (Array.isArray(d.proof) ? d.proof : []).map(String).filter(isImg).slice(0, 2);
+    rec = { memberId: d.memberId, kind, year, amount: kind === 'reg' ? num(db.cfg.regFee) : num(db.cfg.renewFee), date: d.date, note: str(d.note, 500), proof };
+    if (db.mfees[id]) (db.mfees[id].proof || []).filter(x => !proof.includes(x)).forEach(dropImg);
   } else if (col === 'loans') {
     need(db.members[d.memberId] && isDate(d.issued) && num(d.principal) > 0 && num(d.term) >= 1);
     rec = { memberId: d.memberId, principal: num(d.principal), rate: num(d.rate), issued: d.issued, term: Math.round(num(d.term)), purpose: str(d.purpose, 500) };
@@ -191,16 +205,17 @@ function save(admin, col, id, d) {
     rec = { title: str(d.title), date: d.date, body: str(d.body, 5000), images: imgs };
     if (old) (old.images || []).filter(x => !imgs.includes(x)).forEach(dropImg);
   }
-  const prev = col === 'deposits' ? db.deposits[id] : old, pw = rec._pw; delete rec._pw;
+  const prev = col === 'deposits' || col === 'mfees' ? db[col][id] : old, pw = rec._pw; delete rec._pw;
   const det = diff(prev, rec) + (pw ? (prev ? '; ' : '') + 'password: set by admin' : '');
   if (!prev || det) logIt(admin.name, prev ? 'edit' : 'add', col, labelOf(col, rec), det);
   db[col][id || newId()] = rec;
+  if (col === 'members') renumber();
 }
 function remove(admin, col, id) {
   need(COLS.includes(col) && db[col][id]);
-  if (col === 'members') { need(id !== admin.id, 'self_admin'); need(!rows('deposits').some(d => d.memberId === id) && !rows('loans').some(l => l.memberId === id), 'has_records'); }
+  if (col === 'members') { need(id !== admin.id, 'self_admin'); need(!rows('deposits').some(d => d.memberId === id) && !rows('loans').some(l => l.memberId === id) && !rows('mfees').some(f => f.memberId === id), 'has_records'); }
   if (col === 'notices') (db.notices[id].images || []).forEach(dropImg);
-  if (col === 'deposits') (db.deposits[id].proof || []).forEach(dropImg);
+  if (col === 'deposits' || col === 'mfees') (db[col][id].proof || []).forEach(dropImg);
   if (col === 'loans') for (const r of rows('repayments')) if (r.loanId === id) delete db.repayments[r.id];
   logIt(admin.name, 'delete', col, labelOf(col, db[col][id]), diff(db[col][id], null));
   delete db[col][id];
@@ -254,7 +269,7 @@ async function handle(req, res) {
     need(name); need(/^[a-z0-9._-]{3,30}$/.test(lid), 'bad_login_id'); need(String(b.password || '').length >= 8, 'weak_password');
     need(!rows('members').some(m => m.loginId === lid), 'login_taken');
     need(rows('members').filter(m => m.status === 'pending').length < 30, 'signup_full');
-    db.members[newId()] = { name, phone: str(b.phone, 40), address: '', note: '', role: 'member', joined: today(), status: 'pending', loginId: lid, pass: hashPass(String(b.password)), pv: 1, admin: false };
+    db.members[newId()] = { name, phone: str(b.phone, 40), address: '', note: '', role: 'member', joined: today(), status: 'pending', created: new Date().toISOString(), loginId: lid, pass: hashPass(String(b.password)), pv: 1, admin: false };
     logIt(name, 'signup', 'members', name, 'loginId: ' + lid);
     persist(); return send(res, 200, { ok: true });
   }
