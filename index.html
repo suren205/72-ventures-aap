@@ -7,6 +7,25 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Rozha+One&display=swap">
 <style>
+#rcpt{position:fixed;inset:0;z-index:50;background:rgba(15,27,45,.55);overflow:auto;padding:16px}
+#rcpt[hidden]{display:none}
+.rc-bar{max-width:560px;margin:0 auto 10px;display:flex;gap:8px;justify-content:flex-end}
+.rc{max-width:560px;margin:0 auto;background:#fff;color:#0f1b2d;border-radius:10px;padding:26px 28px;position:relative;overflow:hidden;font-family:'Mukta',sans-serif}
+.rc-wm{position:absolute;left:50%;top:55%;width:260px;transform:translate(-50%,-50%);opacity:.08;pointer-events:none}
+.rc-head{display:flex;gap:14px;align-items:center;border-bottom:2px solid #12284a;padding-bottom:12px}
+.rc-head img{width:64px;height:64px;object-fit:contain;border-radius:50%}
+.rc-head h2{margin:0;font-size:22px;color:#12284a;line-height:1.2}.rc-head p{margin:2px 0 0;font-size:13px;color:#586a80}
+.rc-title{text-align:center;margin:14px 0 10px;font-size:18px;font-weight:700;letter-spacing:.3px}
+.rc-meta{display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.rc table{width:100%;border-collapse:collapse;font-size:15px;position:relative}
+.rc td{padding:7px 4px;border-bottom:1px solid #dbe2ea;vertical-align:top}.rc td:first-child{color:#586a80;width:42%}
+.rc .rc-amt td{font-size:18px;font-weight:700;border-bottom:2px solid #12284a}
+.rc-words{font-size:13px;color:#586a80;margin:6px 0 0}
+.rc-foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:26px;gap:12px}
+.rc-sign{text-align:center;font-size:13px}.rc-sign .ln{border-top:1px solid #0f1b2d;width:170px;margin:0 auto 4px;padding-top:4px}
+.rc-seal{width:86px;height:86px;object-fit:contain;opacity:.9}
+.rc-note{font-size:11.5px;color:#586a80;text-align:center;margin-top:16px}
+@media print{body>*:not(#rcpt){display:none!important}#rcpt{position:static;background:#fff;padding:0}.rc-bar{display:none}.rc{box-shadow:none;border-radius:0;max-width:none}}
 /* Layout: navy masthead with the company seal, a tab rail, then one working sheet per tab. Money is always right-aligned in tabular figures. */
 :root{
   --bg:#f4f6f9; --surface:#ffffff; --sunk:#eaeef3; --ink:#0f1b2d; --muted:#586a80; --line:#dbe2ea;
@@ -179,6 +198,7 @@ dialog::backdrop{background:rgba(5,12,24,.55)}
 <main id="view"></main>
 <dialog id="dlg"></dialog>
 <div id="toast" hidden></div>
+<div id="rcpt" hidden></div>
 
 <script>
 const T={
@@ -230,7 +250,7 @@ const T={
  e_limit:['This is more than the member can borrow ({0}).','यो रकम सदस्यले लिन सक्ने सीमा ({0}) भन्दा बढी छ।'], e_cash:['There is not enough cash in the bank ({0}).','बैंकमा पर्याप्त मौज्दात छैन ({0})।'], e_term:['The term can be at most {0} months.','अवधि बढीमा {0} महिना हुन सक्छ।'], e_over:['This is more than the amount still owed ({0}).','यो रकम बाँकी साँवा ({0}) भन्दा बढी छ।'], e_need:['Please fill in: {0}','कृपया भर्नुहोस्: {0}'], e_alloc:['The three shares of the fund must add up to 100%.','कोषका तीन हिस्सा जोड्दा १००% हुनुपर्छ।'], e_month:['Write the start month as YYYY-MM, for example 2026-11.','सुरु महिना YYYY-MM ढाँचामा लेख्नुहोस्, जस्तै 2026-11।'], e_save:['Could not save. Check your connection and try again.','सेभ हुन सकेन। इन्टरनेट जाँचेर फेरि प्रयास गर्नुहोस्।'], e_denied:['Only the admin can change records.','एडमिनले मात्र अभिलेख परिवर्तन गर्न सक्छन्।'],
  no_loans:['No loans have been given yet.','अहिलेसम्म कुनै कर्जा दिइएको छैन।'],
  add_entry:['Other income or expense','अन्य आम्दानी वा खर्च'], kind:['Type','प्रकार'], income:['Income','आम्दानी'], expense:['Expense','खर्च'], category:['What for','शीर्षक'], date:['Date','मिति'], desc:['Details','विवरण'], money_in:['In','आम्दानी'], money_out:['Out','निकासा'], balance:['Balance','मौज्दात'], all:['All entries','सबै कारोबार'],
- fees:['Fees','शुल्क'], fee_dup:['This fee is already recorded. Click it in the table to change it.','यो शुल्क पहिले नै लेखिएको छ। बदल्न तालिकामा त्यसमै थिच्नुहोस्।'], reg_fee:['Registration fee','दर्ता शुल्क'], renew_fee:['Renewal fee','नवीकरण शुल्क'], l_mfee:['Membership fee','सदस्यता शुल्क'], rec_fee:['Record fee','शुल्क प्रविष्टि'], fee_kind:['Fee type','शुल्कको प्रकार'], m_year:['Membership year','सदस्यता वर्ष'], yr:['Year {0}','वर्ष {0}'], yr_span:['Year {0} · {1} – {2}','वर्ष {0} · {1} – {2}'], unpaid:['Not paid','बाँकी'], fees_total:['Fees collected','जम्मा शुल्क'],
+ fees:['Fees','शुल्क'], rcpt:['Receipt','रसिद'], rc_title:['Payment Receipt','भुक्तानी रसिद'], rc_no:['Receipt no.','रसिद नं.'], rc_date:['Date','मिति'], rc_from:['Received from','प्राप्त गरिएको'], rc_for:['Payment for','भुक्तानीको विवरण'], rc_mno:['Member no.','सदस्य नं.'], rc_total:['Total received','जम्मा प्राप्त'], rc_words:['In words','अक्षरमा'], rc_by:['Received by (Treasurer)','प्राप्तकर्ता (कोषाध्यक्ष)'], rc_note:['Computer-generated receipt from the 72 Ventures app.','यो रसिद ७२ भेन्चर्स एपबाट तयार गरिएको हो।'], rc_print:['Print / Save PDF','प्रिन्ट / PDF सेभ'], rc_close:['Close','बन्द'], rc_dep:['Monthly saving · {0}','मासिक बचत · {0}'], rc_rep:['Loan repayment','कर्जा भुक्तानी'], rc_method:['Payment method','भुक्तानी माध्यम'], fee_dup:['This fee is already recorded. Click it in the table to change it.','यो शुल्क पहिले नै लेखिएको छ। बदल्न तालिकामा त्यसमै थिच्नुहोस्।'], reg_fee:['Registration fee','दर्ता शुल्क'], renew_fee:['Renewal fee','नवीकरण शुल्क'], l_mfee:['Membership fee','सदस्यता शुल्क'], rec_fee:['Record fee','शुल्क प्रविष्टि'], fee_kind:['Fee type','शुल्कको प्रकार'], m_year:['Membership year','सदस्यता वर्ष'], yr:['Year {0}','वर्ष {0}'], yr_span:['Year {0} · {1} – {2}','वर्ष {0} · {1} – {2}'], unpaid:['Not paid','बाँकी'], fees_total:['Fees collected','जम्मा शुल्क'],
  fees_hint:['Registration fee {0} is paid once when joining. Renewal fee {1} is paid every year from year 2. Year 1 starts {2}.','दर्ता शुल्क {0} सदस्य बन्दा एक पटक मात्र तिर्ने। नवीकरण शुल्क {1} दोस्रो वर्षदेखि हरेक वर्ष तिर्ने। पहिलो वर्ष {2} देखि सुरु हुन्छ।'],
  l_dep:['Share payment','शेयर भुक्तानी'], l_loan:['Loan given','कर्जा निकासा'], l_rep:['Loan repayment','कर्जा फिर्ता'],
  no_ledger:['No entries match.','कुनै कारोबार भेटिएन।'],
@@ -405,7 +425,7 @@ function vMe(){
   </section>
   <div class="two">
     <section class="panel"><h3>${t('me_months')}</h3><div class="list">${months().map((ym,i)=>{const d=S.deposits.find(x=>x.memberId===m.id&&x.month===ym), due=!d&&ym<=nowYm&&(!m.joined||m.joined.slice(0,7)<=ym);
-      return `<div class="li"><div>${fmt(i+1)}. ${fmonth(ym,true)}${d?`<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${num(d.fee)>0?' · '+t('late_fee')+' '+money(d.fee):''}${proofBtns(d)}</small>`:''}</div>${d?`<b class="num">${money(d.amount)}</b>`:`<span class="chip ${due?'warn':''}">${due?t('due'):t('later')}</span>`}</div>`}).join('')}</div></section>
+      return `<div class="li"><div>${fmt(i+1)}. ${fmonth(ym,true)}${d?`<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${num(d.fee)>0?' · '+t('late_fee')+' '+money(d.fee):''}${proofBtns(d)}${rcBtn('dep',d.id)}</small>`:''}</div>${d?`<b class="num">${money(d.amount)}</b>`:`<span class="chip ${due?'warn':''}">${due?t('due'):t('later')}</span>`}</div>`}).join('')}</div></section>
     <section class="panel"><h3>${t('fees')}</h3><p class="sub">${t('fees_hint',money(C.c.regFee),money(C.c.renewFee),fmonth(C.c.startMonth,true))}</p>${feeList(m)}</section>
     <section class="panel"><h3>${t('me_loans')}</h3>${ls.length?`<div class="list">${ls.map(l=>`<div class="li"><div><button class="link" data-act="view-loan" data-id="${l.id}">${fdate(l.issued)}</button> ${statusChip(l.status)}<small>${t('due_date')}: ${fdate(l.dueOn)} · ${t('outstanding')}: ${money(l.out)}</small></div><b class="num">${money(l.principal)}</b></div>`).join('')}</div>`:`<p class="sub">${t('none_yet')}</p>`}</section>
   </div>`;
@@ -447,9 +467,39 @@ function vFees(){
 }
 function feeList(m){
   const cy=curYear(), items=[{kind:'reg',year:1}].concat(Array.from({length:Math.max(0,cy-1)},(_,i)=>({kind:'renew',year:i+2})));
-  return `<div class="list">${items.map(x=>{const f=feeOf(m.id,x.kind,x.year);return `<div class="li"><div>${feeName(x)}${f?`<small>${fdate(f.date)}${f.note?' · '+esc(f.note):''}${proofBtns(f)}</small>`:x.kind==='renew'?`<small>${yrSpan(x.year)}</small>`:''}</div>${f?`<b class="num">${money(f.amount)}</b>`:`<span class="chip warn">${t('unpaid')}</span>`}</div>`}).join('')}</div>`;
+  return `<div class="list">${items.map(x=>{const f=feeOf(m.id,x.kind,x.year);return `<div class="li"><div>${feeName(x)}${f?`<small>${fdate(f.date)}${f.note?' · '+esc(f.note):''}${proofBtns(f)}${rcBtn('fee',f.id)}</small>`:x.kind==='renew'?`<small>${yrSpan(x.year)}</small>`:''}</div>${f?`<b class="num">${money(f.amount)}</b>`:`<span class="chip warn">${t('unpaid')}</span>`}</div>`}).join('')}</div>`;
 }
 const pics=n=>(n.images||[]).length?`<div class="pics">${n.images.map(id=>`<button class="pic" data-act="view-img" data-id="${id}"><img src="/img/${id}.jpg" alt="" loading="lazy"></button>`).join('')}</div>`:'';
+const rcBtn=(k,id)=>` <button class="link" data-act="rcpt" data-k="${k}" data-id="${id}">🧾 ${t('rcpt')}</button>`;
+function inWords(n){n=Math.round(num(n));if(!n)return 'Zero';const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'],b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  const two=x=>x<20?a[x]:b[Math.floor(x/10)]+(x%10?' '+a[x%10]:''), three=x=>(x>=100?a[Math.floor(x/100)]+' Hundred'+(x%100?' ':''):'')+(x%100?two(x%100):'');
+  const parts=[];const cr=Math.floor(n/1e7);n%=1e7;const lk=Math.floor(n/1e5);n%=1e5;const th=Math.floor(n/1e3);n%=1e3;
+  if(cr)parts.push(three(cr)+' Crore');if(lk)parts.push(two(lk)+' Lakh');if(th)parts.push(two(th)+' Thousand');if(n)parts.push(three(n));return parts.join(' ')}
+function receipt(k,id){
+  let m,no,date,rows=[],total=0,note='';
+  if(k==='dep'){const d=S.deposits.find(x=>x.id===id);if(!d)return;m=C.mBy[d.memberId];no=sn(m)+'/'+d.month;date=d.date;note=d.note;
+    rows.push([t('rc_dep',fmonth(d.month,true)),fmt(d.shares)+' '+t('shares')+' × '+money(C.c.shareValue)+' = '+money(d.amount)]);total=num(d.amount);
+    if(num(d.fee)>0){rows.push([t('late_fee'),money(d.fee)]);total+=num(d.fee)}}
+  else if(k==='fee'){const f=S.mfees.find(x=>x.id===id);if(!f)return;m=C.mBy[f.memberId];no=sn(m)+'/'+(f.kind==='reg'?'REG':'REN-'+f.year);date=f.date;note=f.note;
+    rows.push([feeName(f),(f.kind==='renew'?yrSpan(f.year)+' · ':'')+money(f.amount)]);total=num(f.amount)}
+  else if(k==='rep'){const r=S.repays.find(x=>x.id===id);if(!r)return;const l=S.loans.find(x=>x.id===r.loanId);m=C.mBy[l?.memberId];no=sn(m)+'/LN-'+r.date.replaceAll('-','');date=r.date;note=r.note;
+    rows.push([t('rc_rep')+(l?' ('+fdate(l.issued)+', '+money(l.principal)+')':''),t('principal')+' '+money(r.principal)+' + '+t('interest')+' '+money(r.interest)]);total=num(r.principal)+num(r.interest)}
+  if(!m)return;
+  const box=$('#rcpt');
+  box.innerHTML=`<div class="rc-bar"><button class="btn" data-act="rc-print">🖨️ ${t('rc_print')}</button><button class="btn ghost" data-act="rc-close">${t('rc_close')}</button></div>
+  <div class="rc"><img class="rc-wm" src="/seal.png" alt="">
+   <div class="rc-head"><img src="/logo.jpg" alt=""><div><h2>७२ भेन्चर्स · 72 Ventures</h2><p>SLC २०७२ ब्याच · ${esc(C.c.email||'ventures72.official@gmail.com')}</p></div></div>
+   <div class="rc-title">${t('rc_title')}</div>
+   <div class="rc-meta"><span><b>${t('rc_no')}:</b> ${esc(no)}</span><span><b>${t('rc_date')}:</b> ${fdate(date)}</span></div>
+   <table><tr><td>${t('rc_from')}</td><td><b>${esc(m.name)}</b></td></tr><tr><td>${t('rc_mno')}</td><td>${sn(m)}</td></tr>
+   ${rows.map(r=>`<tr><td>${t('rc_for')}</td><td>${esc(r[0])}<br><small>${esc(r[1])}</small></td></tr>`).join('')}
+   ${note?`<tr><td>${t('note')}</td><td>${esc(note)}</td></tr>`:''}
+   <tr class="rc-amt"><td>${t('rc_total')}</td><td>${money(total)}</td></tr></table>
+   <p class="rc-words">${t('rc_words')}: Rupees ${inWords(total)} only</p>
+   <div class="rc-foot"><img class="rc-seal" src="/seal.png" alt=""><div class="rc-sign"><div class="ln">${t('rc_by')}</div></div></div>
+   <p class="rc-note">${t('rc_note')}</p></div>`;
+  box.hidden=false; box.scrollTop=0;
+}
 const proofBtns=d=>(d.proof||[]).map(id=>` <button class="link" data-act="view-img" data-id="${id}">📎 ${t('see_proof')}</button>`).join('');
 const nomineeTxt=m=>m.nomineeName?esc(m.nomineeName)+(m.nomineeRelation?' ('+esc(m.nomineeRelation)+')':'')+(m.nomineePhone?' · '+esc(m.nomineePhone):''):t('no_nominee');
 const statusChip=s=>`<span class="chip ${s==='closed'?'good':s==='overdue'?'bad':'warn'}">${t('s_'+s)}</span>`;
@@ -514,7 +564,7 @@ function openForm(o){
     else c=`<input id="${id}" type="${f.type||'text'}" value="${esc(v)}" ${f.type==='number'?`inputmode="decimal" step="any" min="0"`:''} ${f.ph?`placeholder="${esc(f.ph)}"`:''}>`;
     return `<div class="fld"><label for="${id}">${esc(f.label)}</label>${c}</div>`};
   dlg.innerHTML=`<form class="dlg-in" id="dlg-form" novalidate><h2>${esc(o.title)}</h2>${o.fields.map(fld).join('')}${o.live?'<div class="live" id="dlg-live"></div>':''}<div class="err" id="dlg-err" hidden></div>
-   <div class="dlg-foot">${o.del?`<button type="button" class="btn danger" data-act="form-del">${t('del')}</button>`:''}<span class="sp"></span><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button><button class="btn" id="dlg-save">${t('save')}</button></div></form>`;
+   <div class="dlg-foot">${o.del?`<button type="button" class="btn danger" data-act="form-del">${t('del')}</button>`:''}${o.rc?`<button type="button" class="btn ghost" data-act="rcpt" data-k="${o.rc[0]}" data-id="${o.rc[1]}">🧾 ${t('rcpt')}</button>`:''}<span class="sp"></span><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button><button class="btn" id="dlg-save">${t('save')}</button></div></form>`;
   if(!dlg.open)dlg.showModal(); drawThumbs(); liveUpdate();
 }
 function drawThumbs(){const box=$('#f-imgs');if(!box)return;box.innerHTML=F.imgs.map(id=>`<span class="thumb"><img src="/img/${id}.jpg" alt=""><button type="button" data-act="rm-img" data-id="${id}" aria-label="${t('del')}">×</button></span>`).join('');$('#f-imgfile').hidden=F.imgs.length>=F.imgMax}
@@ -591,7 +641,7 @@ function fDeposit(mid,ym){
    live:v=>`${t('amount')}: <b>${money(num(v.shares)*c.shareValue)}</b><br>${t('late_hint',fmt(c.dueDay),fmt(c.graceDays),money(c.lateFee))}`,
    check:v=>(v.shares<c.minShares||v.shares>c.maxShares||v.shares%1)?t('share_range',fmt(c.minShares),fmt(c.maxShares)):'',
    save:v=>{const M=mid&&fixed?mid:v.memberId, Y=fixed?ym:v.month;return put('deposits',M+'_'+Y,{memberId:M,month:Y,shares:v.shares,amount:v.shares*c.shareValue,fee:num(v.fee),date:v.date,note:v.note,proof:v.proof})},
-   del:ex?()=>col('deposits').doc(ex.id).delete():null});
+   rc:ex?['dep',ex.id]:null, del:ex?()=>col('deposits').doc(ex.id).delete():null});
 }
 function fFee(mid,kind,year){
   const c=cfg(), cy=curYear(), fixed=!!mid&&!!kind, ex=fixed?feeOf(mid,kind,num(year)):null;
@@ -605,7 +655,7 @@ function fFee(mid,kind,year){
    live:v=>{const k=fixed?kind:v.kind;return `${t('amount')}: <b>${money(k==='reg'?c.regFee:c.renewFee)}</b>`},
    check:v=>{const M=fixed?mid:v.memberId,K=fixed?kind:v.kind,Y=K==='reg'?1:num(fixed?year:v.year);return !fixed&&feeOf(M,K,Y)?t('fee_dup'):''},
    save:v=>{const M=fixed?mid:v.memberId,K=fixed?kind:v.kind,Y=K==='reg'?1:num(fixed?year:v.year);return put('mfees',M+'_'+K+'_'+Y,{memberId:M,kind:K,year:Y,date:v.date,note:v.note,proof:v.proof})},
-   del:ex?()=>col('mfees').doc(ex.id).delete():null});
+   rc:ex?['fee',ex.id]:null, del:ex?()=>col('mfees').doc(ex.id).delete():null});
 }
 function fLoan(id){
   const c=cfg(), l=id?C.loans.find(x=>x.id===id):null, opts=memberOpts();
@@ -673,7 +723,7 @@ function memberInfo(id){
   const m=C.mBy[id]; if(!m)return;
   const ds=S.deposits.filter(d=>d.memberId===id).sort((a,b)=>a.month<b.month?-1:1), ls=C.loans.filter(l=>l.memberId===id);
   openInfo(m.name,`<dl class="kv" style="margin:0"><dt>${t('serial')}</dt><dd>${sn(m)}</dd><dt>${t('role')}</dt><dd>${roleName(m.role)}</dd><dt>${t('joined')}</dt><dd>${fdate(m.joined)||'—'}</dd>${m.address?`<dt>${t('address')}</dt><dd>${esc(m.address)}</dd>`:''}${S.admin||m.id===S.me?`<dt>${t('nominee')}</dt><dd>${nomineeTxt(m)}</dd>`:''}<dt>${t('shares')}</dt><dd>${fmt(C.shr[id]||0)}</dd><dt>${t('saved')}</dt><dd>${money(C.sav[id]||0)}</dd><dt>${t('loan_out')}</dt><dd>${money(C.owe[id]||0)}</dd><dt>${t('loan_limit')}</dt><dd>${money(C.limit(id))}</dd></dl>
-  <div><b>${t('savings')}</b><div class="list">${ds.map(d=>`<div class="li"><div>${fmonth(d.month,true)}<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${proofBtns(d)}</small></div><b class="num">${money(d.amount)}</b></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>
+  <div><b>${t('savings')}</b><div class="list">${ds.map(d=>`<div class="li"><div>${fmonth(d.month,true)}<small>${fdate(d.date)} · ${fmt(d.shares)} ${t('shares')}${proofBtns(d)}${rcBtn('dep',d.id)}</small></div><b class="num">${money(d.amount)}</b></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>
   <div><b>${t('fees')}</b>${feeList(m)}</div>
   ${ls.length?`<div><b>${t('loans')}</b><div class="list">${ls.map(l=>`<div class="li"><div>${fdate(l.issued)} ${statusChip(l.status)}<small>${t('outstanding')}: ${money(l.out)}</small></div><b class="num">${money(l.principal)}</b></div>`).join('')}</div></div>`:''}`);
 }
@@ -681,7 +731,7 @@ function loanInfo(id){
   const l=C.loans.find(x=>x.id===id); if(!l)return;
   const rs=S.repays.filter(r=>r.loanId===id).sort((a,b)=>a.date<b.date?-1:1);
   openInfo(C.nm(l.memberId)+' · '+money(l.principal),`<dl class="kv" style="margin:0"><dt>${t('status')}</dt><dd>${statusChip(l.status)}</dd><dt>${t('rate_s')}</dt><dd>${fmt(l.rate)}%</dd><dt>${t('issued')}</dt><dd>${fdate(l.issued)}</dd><dt>${t('due_date')}</dt><dd>${fdate(l.dueOn)}</dd><dt>${t('repaid')}</dt><dd>${money(l.repaid)}</dd><dt>${t('outstanding')}</dt><dd>${money(l.out)}</dd>${l.purpose?`<dt>${t('purpose')}</dt><dd>${esc(l.purpose)}</dd>`:''}</dl>
-  <div><b>${t('repayments')}</b><div class="list">${rs.map(r=>`<div class="li"><div>${fdate(r.date)}<small>${t('principal')} ${fmt(r.principal)} + ${t('interest')} ${fmt(r.interest)}${r.note?' · '+esc(r.note):''}</small></div><span style="white-space:nowrap"><b class="num">${money(num(r.principal)+num(r.interest))}</b>${S.admin?` <button class="btn ghost sm" data-act="edit-repay" data-id="${r.id}" data-loan="${id}">${t('edit')}</button>`:''}</span></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>`);
+  <div><b>${t('repayments')}</b><div class="list">${rs.map(r=>`<div class="li"><div>${fdate(r.date)}<small>${t('principal')} ${fmt(r.principal)} + ${t('interest')} ${fmt(r.interest)}${r.note?' · '+esc(r.note):''}${rcBtn('rep',r.id)}</small></div><span style="white-space:nowrap"><b class="num">${money(num(r.principal)+num(r.interest))}</b>${S.admin?` <button class="btn ghost sm" data-act="edit-repay" data-id="${r.id}" data-loan="${id}">${t('edit')}</button>`:''}</span></div>`).join('')||`<p class="sub">${t('none_yet')}</p>`}</div></div>`);
 }
 
 /* ---------- events ---------- */
@@ -705,7 +755,7 @@ document.addEventListener('click',ev=>{
     b.disabled=true; (a==='approve'?api('save',{col:'members',id,data:{...m,status:'active',admin:'no',password:''}}):api('delete',{col:'members',id})).then(load).then(()=>toast(a==='approve'?t('saved_ok'):t('deleted_ok'))).catch(e=>{b.disabled=false;toast(errText(e))});return}
   if(a==='form-del'){ if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t('del_sure');return}
     const d=F.del; b.disabled=true; d().then(()=>{dlg.close();toast(t('deleted_ok'))}).catch(e=>{b.disabled=false;delete b.dataset.sure;b.textContent=t('del');fail(e&&e.soft?e.soft:e&&e.msg==='has_records'?t('has_records'):errText(e))});return}
-  ({'add-member':()=>{S.tab='members';render();fMember()},'edit-member':()=>fMember(id),'dep':()=>fDeposit(b.dataset.m,b.dataset.ym),'add-dep':()=>fDeposit(),'fee':()=>fFee(b.dataset.m,b.dataset.k,b.dataset.y),'add-fee':()=>fFee(),
+  ({'add-member':()=>{S.tab='members';render();fMember()},'edit-member':()=>fMember(id),'dep':()=>fDeposit(b.dataset.m,b.dataset.ym),'add-dep':()=>fDeposit(),'fee':()=>fFee(b.dataset.m,b.dataset.k,b.dataset.y),'rcpt':()=>{if(dlg.open)dlg.close();receipt(b.dataset.k,id)},'rc-print':()=>window.print(),'rc-close':()=>{$('#rcpt').hidden=true},'add-fee':()=>fFee(),
     'add-loan':()=>fLoan(),'edit-loan':()=>fLoan(id),'repay':()=>fRepay(id),'edit-repay':()=>fRepay(b.dataset.loan,id),
     'add-entry':()=>fEntry(),'edit-entry':()=>fEntry(id),'add-notice':()=>fNotice(),'edit-notice':()=>fNotice(id),'edit-settings':()=>fSettings()}[a]||(()=>{}))();
 });
