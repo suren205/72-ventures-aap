@@ -749,13 +749,16 @@ document.addEventListener('click',ev=>{
   if(a==='go-signup'||a==='go-login'){S.state=a==='go-signup'?'signup':'login';S.note='';render();return}
   if(a==='view-member')return memberInfo(id);
   if(a==='view-loan')return loanInfo(id);
+  if(a==='rcpt'){if(dlg.open)dlg.close();receipt(b.dataset.k,id);return}
+  if(a==='rc-print'){window.print();return}
+  if(a==='rc-close'){$('#rcpt').hidden=true;return}
   if(!S.admin)return;
   if(a==='approve'||a==='reject'){const m=S.pending.find(x=>x.id===id); if(!m)return;
     if(a==='reject'&&!b.dataset.sure){b.dataset.sure=1;b.textContent=t('del_sure');return}
     b.disabled=true; (a==='approve'?api('save',{col:'members',id,data:{...m,status:'active',admin:'no',password:''}}):api('delete',{col:'members',id})).then(load).then(()=>toast(a==='approve'?t('saved_ok'):t('deleted_ok'))).catch(e=>{b.disabled=false;toast(errText(e))});return}
   if(a==='form-del'){ if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t('del_sure');return}
     const d=F.del; b.disabled=true; d().then(()=>{dlg.close();toast(t('deleted_ok'))}).catch(e=>{b.disabled=false;delete b.dataset.sure;b.textContent=t('del');fail(e&&e.soft?e.soft:e&&e.msg==='has_records'?t('has_records'):errText(e))});return}
-  ({'add-member':()=>{S.tab='members';render();fMember()},'edit-member':()=>fMember(id),'dep':()=>fDeposit(b.dataset.m,b.dataset.ym),'add-dep':()=>fDeposit(),'fee':()=>fFee(b.dataset.m,b.dataset.k,b.dataset.y),'rcpt':()=>{if(dlg.open)dlg.close();receipt(b.dataset.k,id)},'rc-print':()=>window.print(),'rc-close':()=>{$('#rcpt').hidden=true},'add-fee':()=>fFee(),
+  ({'add-member':()=>{S.tab='members';render();fMember()},'edit-member':()=>fMember(id),'dep':()=>fDeposit(b.dataset.m,b.dataset.ym),'add-dep':()=>fDeposit(),'fee':()=>fFee(b.dataset.m,b.dataset.k,b.dataset.y),'add-fee':()=>fFee(),
     'add-loan':()=>fLoan(),'edit-loan':()=>fLoan(id),'repay':()=>fRepay(id),'edit-repay':()=>fRepay(b.dataset.loan,id),
     'add-entry':()=>fEntry(),'edit-entry':()=>fEntry(id),'add-notice':()=>fNotice(),'edit-notice':()=>fNotice(id),'edit-settings':()=>fSettings()}[a]||(()=>{}))();
 });
